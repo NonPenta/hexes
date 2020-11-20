@@ -24,10 +24,12 @@ int main() {
   sf::ContextSettings settings;
   settings.antialiasingLevel = 4;
 
-  sf::RenderWindow window(sf::VideoMode(1280, 720), "Hex Game Engine Or Shit. Note : I Can't Code Shit");
+  sf::RenderWindow window(sf::VideoMode(sf::VideoMode::getDesktopMode().width, sf::VideoMode::getDesktopMode().height), "Hex Game Engine Or Shit. Note : I Can't Code Shit");
 
-  sf::View gameview(sf::Vector2f(0.f, 0.f), sf::Vector2f(1280.f, 720.f));
-  gameview.zoom(.5f);
+  sf::View gameview(sf::Vector2f(0.f, 0.f), sf::Vector2f(sf::VideoMode::getDesktopMode().width, sf::VideoMode::getDesktopMode().height));
+  float zoom = 1;
+  gameview.zoom(zoom);
+
 
 // ------------------------------- MAIN LOOP -----------------------------------
 
@@ -49,30 +51,6 @@ int main() {
       default: break;
       }
     }
-
-
-    // -------------------- Coloring the hex the mouse is on -------------------
-    float mouse_x = sf::Mouse::getPosition().x + gameview.getCenter().x - gameview.getSize().x/2;
-    float mouse_y = sf::Mouse::getPosition().y + gameview.getCenter().y - gameview.getSize().y/2;
-
-    float hex_mouse_x = (std::sqrt(3.0)/3 * mouse_x - 1./3 * mouse_y)/10;
-    float hex_mouse_y = 2./3 * mouse_y/10;
-
-    int hex_x = (int)std::round(hex_mouse_x);
-    int hex_y = (int)std::round(hex_mouse_y);
-
-    int chunk_x = (hex_x+32)/65 - (hex_x+32 < 0);
-    int chunk_y = (hex_y+32)/65 - (hex_y+32 < 0);                               // cpp's division is fucking bad. it's trash.
-
-    chunk_storage[std::to_string(chunk_x) + ";" + std::to_string(chunk_y)].c[hex_x-chunk_x*65+32][hex_y-chunk_y*65+32].s.setFillColor(sf::Color(0, 255, 0));
-
-    // So we can see some distance between the actual position of the mouse and the hex thats colored
-    // WHY
-    // lemme debug this
-    // seems to be linked to the game view's zoom and position etc
-    // idk why
-    // probably an error abt my displays size first
-    // and other things idk
 
     // ------------------- MOVEMENT INPUTS ------------------------------------
     float spd = 5.f;
@@ -132,12 +110,6 @@ int main() {
 
     // -- And we display
     window.display();
-
-    // decoloring the hex the mouse is on because else it leaves a trace and i dont want that i just want to check
-    /// wether or not i can convert back from pixel to hex
-
-    chunk_storage[std::to_string(chunk_x) + ";" + std::to_string(chunk_y)].c[hex_x-chunk_x*65+32][hex_y-chunk_y*65+32].s.setFillColor(sf::Color(32, 31, 35));
-
   }
 
 
