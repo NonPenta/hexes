@@ -1,4 +1,6 @@
-#include <SFML/Graphics.hpp>
+#include <unordered_map>
+#include <cmath>
+#include "hex_utils.hpp"
 
 int abs(int x) { if (x > 0) { return x; } else { return -x; }}
 int abs(float x) { if (x > 0) { return x; } else { return -x; }}

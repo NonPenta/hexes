@@ -1,3 +1,4 @@
+#pragma once
 struct Coord {
   union {
     int v[2];
