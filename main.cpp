@@ -4,7 +4,7 @@
 #include <unordered_map>
 #include <SFML/Graphics.hpp>
 #include "chunk.hpp"
-#include "my_utils.cpp"
+#include "hex_utils.cpp"
 
 int main() {
 
@@ -23,7 +23,7 @@ int main() {
 
   // ---- Window, window settings and view initialisation
   sf::ContextSettings settings;
-  settings.antialiasingLevel = 4;
+  settings.antialiasingLevel = 16;
 
   sf::RenderWindow window(sf::VideoMode(sf::VideoMode::getDesktopMode().width, sf::VideoMode::getDesktopMode().height), "Hex Game Engine Or Shit. Note : I Can't Code Shit");
 
