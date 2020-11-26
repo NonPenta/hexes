@@ -22,8 +22,8 @@ int main() {
 
 
   // ---- Window, window settings and view initialisation
-  sf::ContextSettings settings;
-  settings.antialiasingLevel = 16;
+  // sf::ContextSettings settings;
+  // settings.antialiasingLevel = 16;
 
   sf::RenderWindow window(sf::VideoMode(sf::VideoMode::getDesktopMode().width, sf::VideoMode::getDesktopMode().height), "Hex Game Engine Or Shit. Note : I Can't Code Shit");
 
