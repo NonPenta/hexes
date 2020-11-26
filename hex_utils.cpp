@@ -30,7 +30,8 @@ sf::Vector2i hex_from_pix(sf::Vector2f pos) {
 
 sf::Vector2i chunk_from_hex(sf::Vector2i hex_pos) {
   int x = (hex_pos.x+32)/65 - (hex_pos.x+32 < 0);
-  int y = (hex_pos.y+32)/65 - (hex_pos.y+32 < 0);                               // cpp's division is fucking bad. it's trash.
+  int y = (hex_pos.y+32)/65 - (hex_pos.y+32 < 0);         // cpp's division is fucking bad. it's trash.
+                                                          // (not euclidian division)
 
   return sf::Vector2i(x, y);
 }
