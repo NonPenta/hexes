@@ -11,12 +11,12 @@ int main() {
   // ----------------- INITIALISATION ---------------------
 
     // chunk_storage initialisation
-  std::unordered_map<std::string, Chunk> chunk_storage;                         // Create chunk storage
+  std::unordered_map<std::pair<int,int>, Chunk, boost::hash<std::pair<int,int>>> chunk_storage;                         // Create chunk storage
 
   for (int cx = -1; cx <= 1; cx++) {
     for (int cy = -1; cy <= 1; cy++) {
-      Chunk chunk{cx, cy};
-      chunk_storage[std::to_string(cx)+";"+std::to_string(cy)] = chunk;         // Initialize chunk storage
+      chunk_storage[std::pair<int, int>{cx,cy}] = Chunk{cx, cy};
+         // Initialize chunk storage
     }
   }
 
@@ -65,7 +65,8 @@ int main() {
     sf::Vector2i chunk_pos = chunk_from_hex(hex_pos);
     sf::Vector2i hex_in_chunk_pos = hex_within_chunk(hex_pos);
 
-    chunk_storage[std::to_string(chunk_pos.x) + ";" + std::to_string(chunk_pos.y)].c[hex_in_chunk_pos.x][hex_in_chunk_pos.y].s.setFillColor(sf::Color(0, 255, 0));
+    std::pair<int, int> mpos{chunk_pos.x,chunk_pos.y};
+    chunk_storage[mpos].c[hex_in_chunk_pos.x][hex_in_chunk_pos.y].s.setFillColor(sf::Color(0, 255, 0));
 
     // So we can see some distance between the actual position of the mouse and the hex thats colored
     // WHY
@@ -106,8 +107,10 @@ int main() {
         for (int x = -32; x <= 32; x++) {                                       // Looping through chunk's hex coordinates
           for (int y = -32; y <= 32; y++) {
 
-            float shape_x = chunk_storage[std::to_string(cx)+";"+std::to_string(cy)].c[x+32][y+32].s.getPosition().x; // Get hexagon x
-            float shape_y = chunk_storage[std::to_string(cx)+";"+std::to_string(cy)].c[x+32][y+32].s.getPosition().y; // Get hexagon y
+            std::pair<int, int> pos{cx,cy};
+
+            float shape_x = chunk_storage[pos].c[x+32][y+32].s.getPosition().x; // Get hexagon x
+            float shape_y = chunk_storage[pos].c[x+32][y+32].s.getPosition().y; // Get hexagon y
 
             // here was getting the view's position
 
@@ -123,7 +126,7 @@ int main() {
 
 
                 // And now we draw the hexagon if it is in the view ----
-                window.draw(chunk_storage[std::to_string(cx)+";"+std::to_string(cy)].c[x+32][y+32].s);
+                window.draw(chunk_storage[pos].c[x+32][y+32].s);
             }
           }
         }
@@ -136,7 +139,7 @@ int main() {
     // decoloring the hex the mouse is on because else it leaves a trace and i dont want that i just want to check
     /// wether or not i can convert back from pixel to hex
 
-    chunk_storage[std::to_string(chunk_pos.x) + ";" + std::to_string(chunk_pos.y)].c[hex_in_chunk_pos.x][hex_in_chunk_pos.y].s.setFillColor(sf::Color(32, 31, 35));
+    chunk_storage[mpos].c[hex_in_chunk_pos.x][hex_in_chunk_pos.y].s.setFillColor(sf::Color(32, 31, 35));
 
   }
 
