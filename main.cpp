@@ -4,6 +4,7 @@
 #include <unordered_map>
 #include <SFML/Graphics.hpp>
 #include "chunk.hpp"
+#include "my_utils.cpp"
 
 int main() {
 
@@ -27,7 +28,7 @@ int main() {
   sf::RenderWindow window(sf::VideoMode(sf::VideoMode::getDesktopMode().width, sf::VideoMode::getDesktopMode().height), "Hex Game Engine Or Shit. Note : I Can't Code Shit");
 
   sf::View gameview(sf::Vector2f(0.f, 0.f), sf::Vector2f(sf::VideoMode::getDesktopMode().width, sf::VideoMode::getDesktopMode().height));
-  float zoom = 1;
+  float zoom = .5;
   gameview.zoom(zoom);
 
 
@@ -46,11 +47,33 @@ int main() {
           switch (event.key.code) {
             case sf::Keyboard::Escape: window.close();  // Fermer la fenêtre
                                        break;
+
             default: break;
           }
       default: break;
       }
     }
+
+
+    // -------------------- Coloring the hex the mouse is on -------------------
+
+    sf::Vector2i pixel_mouse_pos = sf::Mouse::getPosition(window);              // Getting the mouse pos on screen
+
+    sf::Vector2f world_mouse_pos = window.mapPixelToCoords(pixel_mouse_pos);    // Converting it to world position
+
+    sf::Vector2i hex_pos = hex_from_pix(world_mouse_pos);
+    sf::Vector2i chunk_pos = chunk_from_hex(hex_pos);
+    sf::Vector2i hex_in_chunk_pos = hex_within_chunk(hex_pos);
+
+    chunk_storage[std::to_string(chunk_pos.x) + ";" + std::to_string(chunk_pos.y)].c[hex_in_chunk_pos.x][hex_in_chunk_pos.y].s.setFillColor(sf::Color(0, 255, 0));
+
+    // So we can see some distance between the actual position of the mouse and the hex thats colored
+    // WHY
+    // lemme debug this
+    // seems to be linked to the game view's zoom and position etc
+    // idk why
+    // probably an error abt my displays size first
+    // and other things idk
 
     // ------------------- MOVEMENT INPUTS ------------------------------------
     float spd = 5.f;
@@ -78,7 +101,6 @@ int main() {
     float delta_view_width = gameview.getSize().x/2;
     float delta_view_height = gameview.getSize().y/2;                                  // Divided by 2 because then we can get border from center
 
-
     for (int cx = -1; cx <= 1; cx++) {                                          // Looping through chunk_storage's chunk coordinates
       for (int cy = -1; cy <= 1; cy++) {
         for (int x = -32; x <= 32; x++) {                                       // Looping through chunk's hex coordinates
@@ -94,13 +116,13 @@ int main() {
             // ------------- OPTIMISATION because drawing shit you cant see isnt
             // very smort and kills framerate ----------------
 
-            if ((-15 + view_x - delta_view_width < shape_x)                           // If the hexagon isnt out the left border
-              && (shape_x < view_x + delta_view_width - 1)                            // If the hexagon isnt out the right border
-              && (-20 + view_y - delta_view_height < shape_y)                         // If the hexagon isnt out the up border
-              && (shape_y < view_y + delta_view_height)) {                            // If the hexagon isnt out the down border
+            if ((-10 + view_x - delta_view_width < shape_x)                           // If the hexagon isnt out the left border
+              && (shape_x < view_x + delta_view_width + 9.7)                            // If the hexagon isnt out the right border
+              && (-4 + view_y - delta_view_height < shape_y)                         // If the hexagon isnt out the up border
+              && (shape_y < view_y + delta_view_height + 10)) {                            // If the hexagon isnt out the down border
 
 
-                // And now we draw teh hexagon if it is in the view ----
+                // And now we draw the hexagon if it is in the view ----
                 window.draw(chunk_storage[std::to_string(cx)+";"+std::to_string(cy)].c[x+32][y+32].s);
             }
           }
@@ -110,10 +132,14 @@ int main() {
 
     // -- And we display
     window.display();
+
+    // decoloring the hex the mouse is on because else it leaves a trace and i dont want that i just want to check
+    /// wether or not i can convert back from pixel to hex
+
+    chunk_storage[std::to_string(chunk_pos.x) + ";" + std::to_string(chunk_pos.y)].c[hex_in_chunk_pos.x][hex_in_chunk_pos.y].s.setFillColor(sf::Color(32, 31, 35));
+
   }
 
 
   return 0;
 }
-
-int abs(int x) { if (x > 0) { return x; } else { return -x; }}
