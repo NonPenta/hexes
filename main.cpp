@@ -51,16 +51,16 @@ int main() {
 
     // -------------------- Coloring the hex the mouse is on -------------------
 
-    sf::Vector2i pixel_mouse_pos = sf::Mouse::getPosition(window);              // Getting the mouse pos on screen
-
-    sf::Vector2f world_mouse_pos = window.mapPixelToCoords(pixel_mouse_pos);    // Converting it to world position
-
-    sf::Vector2i hex_pos = hex_from_pix(world_mouse_pos);
-    sf::Vector2i chunk_pos = chunk_from_hex(hex_pos);
-    sf::Vector2i hex_in_chunk_pos = hex_within_chunk(hex_pos);
-
-    std::pair<int, int> mpos{chunk_pos.x,chunk_pos.y};
-    chunk_storage.map[mpos].c[hex_in_chunk_pos.x][hex_in_chunk_pos.y].s.setFillColor(sf::Color(0, 255, 0));
+    // sf::Vector2i pixel_mouse_pos = sf::Mouse::getPosition(window);              // Getting the mouse pos on screen
+    //
+    // sf::Vector2f world_mouse_pos = window.mapPixelToCoords(pixel_mouse_pos);    // Converting it to world position
+    //
+    // sf::Vector2i hex_pos = hex_from_pix(world_mouse_pos);
+    // sf::Vector2i chunk_pos = chunk_from_hex(hex_pos);
+    // sf::Vector2i hex_in_chunk_pos = hex_within_chunk(hex_pos);
+    //
+    // std::pair<int, int> mpos{chunk_pos.x,chunk_pos.y};
+    // chunk_storage.map[mpos].c[hex_in_chunk_pos.x][hex_in_chunk_pos.y].s.setFillColor(sf::Color(0, 255, 0));
 
     // ------------------- MOVEMENT INPUTS ------------------------------------
     float spd = 5.f;
@@ -75,20 +75,16 @@ int main() {
 
     // SETTING THE WINDOW'S VIEW
     window.setView(gameview);
+    chunk_storage.setView(gameview);
 
+    window.draw(chunk_storage);
 
-
-    // ----------------- DRAWING EVERYTHING -----------------------------------
-
-    chunk_storage.drawOn(window, gameview);
-
-    // -- And we display
     window.display();
 
     // decoloring the hex the mouse is on because else it leaves a trace and i dont want that i just want to check
-    /// wether or not i can convert back from pixel to hex
+    // wether or not i can convert back from pixel to hex
 
-    chunk_storage.map[mpos].c[hex_in_chunk_pos.x][hex_in_chunk_pos.y].s.setFillColor(sf::Color(32, 31, 35));
+    // chunk_storage.map[mpos].c[hex_in_chunk_pos.x][hex_in_chunk_pos.y].s.setFillColor(sf::Color(32, 31, 35));
 
   }
 

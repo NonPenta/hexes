@@ -2,7 +2,7 @@
 #include "hex.hpp"
 
 Hex::Hex() {}
-Hex::Hex(int x_, int y_): p(x_, y_), size(10), s(size-1, 6) {
+Hex::Hex(int x_, int y_): p{x_, y_}, size{10}, s{size-1, 6} {
 
   s.setOutlineThickness(1);
 
@@ -38,4 +38,14 @@ Coord Hex::neighbor(int dir) {
 int Hex::distance(Hex a) {
   Coord c = p - a.p;
   return c.abs();
+}
+
+bool Hex::isInView(sf::Vector2f viewPos, sf::Vector2f viewSizeDelta) const {
+  sf::Vector2f shapePos = s.getPosition();
+  return (shapePos.x > viewPos.x-viewSizeDelta.x-10)&&(shapePos.x<viewPos.x+viewSizeDelta.x+9.7)&&(shapePos.y > viewPos.y - viewSizeDelta.y - 4)&&(shapePos.y < viewPos.y + viewSizeDelta.y + 10);
+  // tis very long so : first cond within right border, second left, third up and fourth down
+}
+
+void Hex::draw(sf::RenderTarget& target, sf::RenderStates states) const {
+  target.draw(s, states);
 }
