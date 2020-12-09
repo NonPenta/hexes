@@ -2,7 +2,7 @@
 #include "hex.hpp"
 
 Hex::Hex() {}
-Hex::Hex(int x_, int y_): p{x_, y_}, size{10}, s{size-1, 6} {
+Hex::Hex(int x_, int y_): type{"std"}, p{x_, y_}, size{10}, s{size-1, 6} {
 
   s.setOutlineThickness(1);
 
@@ -17,7 +17,7 @@ Hex::Hex(int x_, int y_): p{x_, y_}, size{10}, s{size-1, 6} {
   s.setOrigin(9.7, 12);
 }
 
-Hex::Hex(int x_, int y_, float size_): p(x_, y_), size(size_), s(size-1, 6) {
+Hex::Hex(int x_, int y_, float size_): type{"custom"}, p(x_, y_), size(size_), s(size-1, 6) {
 
   s.setOutlineThickness(1);
 

@@ -1,5 +1,6 @@
 #pragma once
 #include <SFML/Graphics.hpp>
+#include <string>
 #include "coordinates.hpp"
 
 
@@ -16,6 +17,7 @@ public:
     bool isInView(sf::Vector2f viewPos, sf::Vector2f viewSizeDelta) const;
 
 private:
+  std::string type;
   Coord p;
   float size;
   sf::CircleShape s;
