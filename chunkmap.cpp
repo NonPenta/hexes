@@ -11,19 +11,22 @@ ChunkMap::ChunkMap(int x0, int y0, int dx, int dy) : map{}, pos0{x0, y0}, dpos{d
   }
 }
 
-void ChunkMap::setView(sf::View& view) {
-  for (int cx = pos0.x; cx < pos0.x+dpos.x; cx++) {             // Looping through chunk map's chunk coordinates
-    for (int cy = pos0.y; cy < pos0.y+dpos.y; cy++) {
-      std::pair<int, int> pos{cx,cy};
-      map[pos].setView(view);
-    }
+void ChunkMap::setView(sf::View& view) { // Iteration to change
+  for (auto &element : map) {
+    element.second.setView(view);
   }
 }
 
-void ChunkMap::draw(sf::RenderTarget& target, sf::RenderStates states) const {
-  for (int cx = pos0.x; cx < pos0.x+dpos.x; cx++) {
-    for (int cy = pos0.y; cy < pos0.y+dpos.y; cy++) {
-      target.draw(map.at(std::pair<int, int>{cx,cy}), states);
-    }
+void ChunkMap::draw(sf::RenderTarget& target, sf::RenderStates states) const { // Iteration to change
+  for (const auto &element : map) {
+    target.draw(element.second, states);
   }
+}
+
+std::unordered_map<std::pair<int,int>, Chunk, boost::hash<std::pair<int,int>>> ChunkMap::getMap() {
+  std::unordered_map<std::pair<int,int>, Chunk, boost::hash<std::pair<int,int>>> map_out;
+  for (const auto &element : map) {
+      map_out[element.first] = element.second;
+  }
+  return map_out;
 }

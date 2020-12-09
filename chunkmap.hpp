@@ -11,6 +11,8 @@ public:
 
   void setView(sf::View& view);
 
+  std::unordered_map<std::pair<int,int>, Chunk, boost::hash<std::pair<int,int>>> getMap();
+
 private:
   std::unordered_map<std::pair<int,int>, Chunk, boost::hash<std::pair<int,int>>> map;
   sf::Vector2i pos0;
