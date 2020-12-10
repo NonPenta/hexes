@@ -18,15 +18,12 @@ void ChunkMap::setView(sf::View& view) { // Iteration to change
 }
 
 void ChunkMap::draw(sf::RenderTarget& target, sf::RenderStates states) const { // Iteration to change
-  for (const auto &element : map) {
+  for (const auto &element : map) { // will check if anything in chunk is visible to further optimize
     target.draw(element.second, states);
   }
 }
 
 std::unordered_map<std::pair<int,int>, Chunk, boost::hash<std::pair<int,int>>> ChunkMap::getMap() {
-  std::unordered_map<std::pair<int,int>, Chunk, boost::hash<std::pair<int,int>>> map_out;
-  for (const auto &element : map) {
-      map_out[element.first] = element.second;
-  }
+  std::unordered_map<std::pair<int,int>, Chunk, boost::hash<std::pair<int,int>>> map_out = map;
   return map_out;
 }

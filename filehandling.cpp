@@ -1,22 +1,27 @@
 #include <filesystem>
+namespace fs = std::filesystem;
 #include <fstream>
 #include <iostream>
 #include <version>
 #include "filehandling.hpp"
 
 void save(ChunkMap cmap, std::string savename) {
-  std::filesystem::path savespath = "~/.hge:shitty";
-  bool check_saves_dir = std::filesystem::create_directory(savespath);
-  if (check_saves_dir) {
-    std::cout << "I am a master of computers" << '\n';
-  } else {
-    std::cout << "get rekt noob" << '\n';
-  }
-  std::filesystem::path savepath = savespath;
+
+  fs::path savepath = ".hge:saves";
   savepath /= savename;
-  bool check_thissave_dir = std::filesystem::create_directory(savespath); // unused yet
-  for (const auto &element : cmap.getMap()) { // element unused
-    // Create file with name element.first.first:element.first.second
-    // fill file, csv? boost parser?
+  bool check_thissave_dir = fs::create_directories(savepath); // unused yet
+
+  for (const auto &chunk_pair : cmap.getMap()) { // element unused
+    // create file with name : "chunk_x:chunk_y"
+    std::fstream chunkfile;
+    chunkfile.open(savepath/(std::to_string(chunk_pair.first.first)+":"+std::to_string(chunk_pair.first.second)), std::fstream::app);
+
+    for (int x = -32; x <= 32; x++) {                         // Looping through chunk's hex coordinates
+      for (int y = -32; y <= 32; y++) {
+        // Add hex info to file.
+        chunkfile << std::to_string(x)+":"+std::to_string(y)+";";
+      }
+    }
+    chunkfile.close();
   }
 }

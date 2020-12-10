@@ -6,6 +6,7 @@
 #include "chunk.hpp"
 #include "hex_utils.hpp"
 #include "chunkmap.hpp"
+// #include "filehandling.hpp"
 
 int main() {
 
@@ -39,8 +40,10 @@ int main() {
                                 break;
         case sf::Event::KeyPressed:
           switch (event.key.code) {
-            case sf::Keyboard::Escape: window.close();  // Close the window
-                                       break;
+            // case sf::Keyboard::Escape:
+            //   save(chunk_storage, "test_0");
+            //   window.close();  // Close the window
+            //   break;
 
             default: break;
           }
