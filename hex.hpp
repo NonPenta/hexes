@@ -8,13 +8,15 @@ struct Hex : public sf::Drawable {
 public:
     Hex();
     Hex(int x_, int y_);
-    Hex(int x_, int y_, float size_);
+    Hex(int x_, int y_, std::string type_);
 
     Coord neighbor(int dir);
 
     int distance(Hex a);
 
     bool isInView(sf::Vector2f viewPos, sf::Vector2f viewSizeDelta) const;
+
+    std::string getType() const;
 
 private:
   std::string type;
