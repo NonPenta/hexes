@@ -9,6 +9,9 @@ struct Chunk : public sf::Drawable {
     Chunk(int x_, int y_);
 
     void setView(sf::View& view);
+    std::array<std::array<Hex, 65>, 65> getc() const;
+
+    void setHexType(int hexX, int hexY, std::string type);
 
   private:
     std::array<std::array<Hex, 65>, 65> c;

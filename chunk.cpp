@@ -15,6 +15,14 @@ void Chunk::setView(sf::View& view) {
   viewSizeDelta = sf::Vector2f{view.getSize().x/2, view.getSize().y/2};
 }
 
+std::array<std::array<Hex, 65>, 65> Chunk::getc() const {
+  return c;
+}
+
+void Chunk::setHexType(int hexX, int hexY, std::string type) {
+  c[hexX+32][hexY+32] = Hex{x*65+hexX,y*65+hexY,type};
+}
+
 void Chunk::draw(sf::RenderTarget& target, sf::RenderStates states) const {
   for (int x = -32; x <= 32; x++) {                         // Looping through chunk's hex coordinates
     for (int y = -32; y <= 32; y++) {
