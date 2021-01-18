@@ -10,6 +10,7 @@ public:
   ChunkMap(int x0, int y0, int dx, int dy);
 
   void setView(sf::View& view);
+  void setChunk(std::pair<int,int> cPos, Chunk chunk);
 
   std::unordered_map<std::pair<int,int>, Chunk, boost::hash<std::pair<int,int>>> getMap();
 

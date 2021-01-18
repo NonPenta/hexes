@@ -11,13 +11,17 @@ ChunkMap::ChunkMap(int x0, int y0, int dx, int dy) : map{}, pos0{x0, y0}, dpos{d
   }
 }
 
-void ChunkMap::setView(sf::View& view) { // Iteration to change
+void ChunkMap::setView(sf::View& view) {
   for (auto &element : map) {
     element.second.setView(view);
   }
 }
 
-void ChunkMap::draw(sf::RenderTarget& target, sf::RenderStates states) const { // Iteration to change
+void ChunkMap::setChunk(std::pair<int,int> cPos, Chunk chunk) {
+  map[cPos] = chunk;
+}
+
+void ChunkMap::draw(sf::RenderTarget& target, sf::RenderStates states) const {
   for (const auto &element : map) { // will check if anything in chunk is visible to further optimize
     target.draw(element.second, states);
   }
