@@ -6,15 +6,15 @@
 #include "chunk.hpp"
 #include "hex_utils.hpp"
 #include "chunkmap.hpp"
-// #include "filehandling.hpp"
+#include "filehandling.hpp"
 
 int main() {
 
   // ----------------- INITIALISATION ---------------------
 
     // chunk_storage initialisation
-  ChunkMap chunk_storage{-1,-1,3,3};
 
+  ChunkMap chunk_storage = load("loadTest");
 
   // ---- Window, window settings and view initialisation
   // sf::ContextSettings settings;
@@ -40,10 +40,10 @@ int main() {
                                 break;
         case sf::Event::KeyPressed:
           switch (event.key.code) {
-            // case sf::Keyboard::Escape:
-            //   save(chunk_storage, "test_0");
-            //   window.close();  // Close the window
-            //   break;
+            case sf::Keyboard::Escape:
+              save(chunk_storage, "test_0");
+              window.close();  // Close the window
+              break;
 
             default: break;
           }
@@ -90,6 +90,7 @@ int main() {
     // chunk_storage.map[mpos].c[hex_in_chunk_pos.x][hex_in_chunk_pos.y].s.setFillColor(sf::Color(32, 31, 35));
 
   }
+
 
 
   return 0;
