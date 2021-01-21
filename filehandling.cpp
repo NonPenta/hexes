@@ -8,8 +8,14 @@ void save(ChunkMap cmap, std::string savename) {
 
   fs::path savepath = ".hge:saves";
   savepath /= savename;
-  bool check_thissave_dir = fs::create_directories(savepath); // unused yet
+  bool save_exists = fs::exists(savepath);
 
+  if (save_exists) {
+    fs::path old_path = savepath;
+    old_path += fs::path{"_old"};
+    fs::rename(savepath, old_path);
+  }
+  fs::create_directories(savepath);
 
   for (const auto &chunk_pair : cmap.getMap()) {
     std::string lastType = "no.";
@@ -18,7 +24,8 @@ void save(ChunkMap cmap, std::string savename) {
     std::fstream chunkfile;
     chunkfile.open(savepath/(std::to_string(chunk_pair.first.first)+":"+std::to_string(chunk_pair.first.second)), std::fstream::app);
 
-    for (int y = -32; y <= 32; y++) {                         // Looping through chunk's hex coordinates
+
+    for (int y = -32; y <= 32; y++) { // Looping through chunk's hex coordinates
       for (int x = -32; x <= 32; x++) {
         // Add hex info to file.
         // if the type didnt change, just add / ; else the new type
@@ -31,6 +38,11 @@ void save(ChunkMap cmap, std::string savename) {
       }
     }
     chunkfile.close();
+  }
+  if (save_exists) {
+    fs::path old_path = savepath;
+    old_path += fs::path{"_old"};
+    fs::remove_all(old_path);
   }
 }
 
