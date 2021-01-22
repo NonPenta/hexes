@@ -5,22 +5,33 @@ namespace fs = std::filesystem;
 #include <thread>
 #include "filehandling.hpp"
 
+bool isInt(const std::string s){
+  if (s.length() == 0) {
+    return false;
+  }
+  return s.find_first_not_of( "+-0123456789" ) == std::string::npos;
+}
 
 void saveChunk(std::pair<std::pair<int,int>,Chunk> chunk_pair, fs::path savepath) {
   std::string lastType = "no.";
+  std::cout << "saving chunk, should be in thread" << '\n';
 
   // create file with name : "chunk_x:chunk_y"
   std::fstream chunkfile;
   chunkfile.open(savepath/(std::to_string(chunk_pair.first.first)+":"+std::to_string(chunk_pair.first.second)), std::fstream::app);
 
-
+  int n = 0;
   for (int y = -32; y <= 32; y++) { // Looping through chunk's hex coordinates
     for (int x = -32; x <= 32; x++) {
       // Add hex info to file.
       // if the type didnt change, just add / ; else the new type
       if (chunk_pair.second.getc()[x+32][y+32].getType() == lastType) {
-        chunkfile << "/;";
+        n++;
       } else {
+        if (n > 0) {
+          chunkfile << n << "/;";
+          n = 0;
+        }
         lastType = chunk_pair.second.getc()[x+32][y+32].getType();
         chunkfile << lastType + ";";
       }
@@ -121,7 +132,13 @@ ChunkMap load(std::string savename) {
           token = "";
           n++;
 
-        } else if (ch == '/') { // SAME CONTENT
+        } else if (ch == '/') { // SAME CONTENT, plus some shit because its n/, with n an int to compress file
+            if (isInt(token)) {
+              for (int i = 0; i < std::stoi(token) - 1; i++) {
+                c.setHexType(n%65-32,n/65-32, prevTok);
+                n++;
+              }
+            }
             token = prevTok;
         } else {token += ch;} // ADD TO CONTENT
       }
