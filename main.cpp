@@ -20,7 +20,7 @@ int main() {
   // sf::ContextSettings settings;
   // settings.antialiasingLevel = 16;
 
-  sf::RenderWindow window(sf::VideoMode(sf::VideoMode::getDesktopMode().width, sf::VideoMode::getDesktopMode().height), "Hex Game Engine Or Shit. Note : I Can't Code Shit");
+  sf::RenderWindow window(sf::VideoMode(sf::VideoMode::getDesktopMode().width, sf::VideoMode::getDesktopMode().height), "Map stuff for RPGs. Note : I Can't Code Shit");
 
   sf::View gameview(sf::Vector2f(0.f, 0.f), sf::Vector2f(sf::VideoMode::getDesktopMode().width, sf::VideoMode::getDesktopMode().height));
   float zoom = .5;
