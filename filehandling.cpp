@@ -2,7 +2,33 @@
 namespace fs = std::filesystem;
 #include <fstream>
 #include <iostream>
+#include <thread>
 #include "filehandling.hpp"
+
+
+void saveChunk(std::pair<std::pair<int,int>,Chunk> chunk_pair, fs::path savepath) {
+  std::string lastType = "no.";
+
+  // create file with name : "chunk_x:chunk_y"
+  std::fstream chunkfile;
+  chunkfile.open(savepath/(std::to_string(chunk_pair.first.first)+":"+std::to_string(chunk_pair.first.second)), std::fstream::app);
+
+
+  for (int y = -32; y <= 32; y++) { // Looping through chunk's hex coordinates
+    for (int x = -32; x <= 32; x++) {
+      // Add hex info to file.
+      // if the type didnt change, just add / ; else the new type
+      if (chunk_pair.second.getc()[x+32][y+32].getType() == lastType) {
+        chunkfile << "/;";
+      } else {
+        lastType = chunk_pair.second.getc()[x+32][y+32].getType();
+        chunkfile << lastType + ";";
+      }
+    }
+  }
+  chunkfile.close();
+}
+
 
 void save(ChunkMap cmap, std::string savename) {
 
@@ -17,28 +43,16 @@ void save(ChunkMap cmap, std::string savename) {
   }
   fs::create_directories(savepath);
 
+  // -- PUTTING DATA IN FILES - MULTITHREADED --
+  std::vector<std::thread> save_threads;
   for (const auto &chunk_pair : cmap.getMap()) {
-    std::string lastType = "no.";
-
-    // create file with name : "chunk_x:chunk_y"
-    std::fstream chunkfile;
-    chunkfile.open(savepath/(std::to_string(chunk_pair.first.first)+":"+std::to_string(chunk_pair.first.second)), std::fstream::app);
-
-
-    for (int y = -32; y <= 32; y++) { // Looping through chunk's hex coordinates
-      for (int x = -32; x <= 32; x++) {
-        // Add hex info to file.
-        // if the type didnt change, just add / ; else the new type
-        if (chunk_pair.second.getc()[x+32][y+32].getType() == lastType) {
-          chunkfile << "/;";
-        } else {
-          lastType = chunk_pair.second.getc()[x+32][y+32].getType();
-          chunkfile << lastType + ";";
-        }
-      }
-    }
-    chunkfile.close();
+    save_threads.push_back(std::thread(saveChunk, chunk_pair, savepath));
   }
+  // -- JOINING THE THREADS --
+  for (long unsigned int i = 0; i < save_threads.size(); i++) {
+    save_threads[i].join();
+  }
+
   if (save_exists) {
     fs::path old_path = savepath;
     old_path += fs::path{"_old"};
@@ -67,11 +81,14 @@ ChunkMap load(std::string savename) {
       // --- PARSING FROM FILENAME ----
     for (int i = 0; i < (int)filenameStr.length(); i++) {
       char ch = filenameStr[i];
-      if (ch == ';') {
+      std::cout << ch << '\n';
+      if (ch == ':') {
         chunkPos.push_back(std::stoi(tok));
         tok = "";
       } else {tok += ch;}
     }
+    chunkPos.push_back(std::stoi(tok)); // -- PUSHING BACK THE LAST TOKEN AAAAAAAAAA I STOOPID
+
 
       // --- CONVERTING FROM VECTOR TO PAIR
     std::pair<int,int> chunk_pos;
@@ -80,6 +97,7 @@ ChunkMap load(std::string savename) {
 
     // --- CREATING CHUNK ---
     Chunk c = Chunk{chunk_pos.first, chunk_pos.second};
+    std::cout << chunk_pos.first << ":" << chunk_pos.second << '\n';
     // --- CREATING FILE STREAM AND LINE
     std::fstream chunkfile(cfile.path());
     std::string line;
