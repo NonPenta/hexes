@@ -7,6 +7,7 @@
 #include "hex_utils.hpp"
 #include "chunkmap.hpp"
 #include "filehandling.hpp"
+#include "entity.hpp"
 
 int main() {
 
@@ -14,7 +15,10 @@ int main() {
 
     // chunk_storage initialisation
 
-  ChunkMap chunk_storage = load("loadTest");
+  ChunkMap chunk_storage = load("test_0");
+  std::vector<Entity> entities;
+
+  entities.push_back(Entity(0, 0, "player", 2));
 
   // ---- Window, window settings and view initialisation
   // sf::ContextSettings settings;
@@ -31,6 +35,19 @@ int main() {
 
   while (window.isOpen())
   {
+    // ------- GETTING MOUSE POS (needed in events so moved here) --------
+
+    // Mouse pos on screen converted to position on world
+  sf::Vector2f mousePixPos = window.mapPixelToCoords(sf::Mouse::getPosition(window));
+    // Converting it to hex coordinates
+  sf::Vector2i mouseHexPos = hex_from_pix(mousePixPos);
+    // Getting the chunk pos of the mouse
+  sf::Vector2i mouseChunkPos = chunk_from_hex(mouseHexPos);
+    // Getting the indexes of the hexes inside the chunk
+  sf::Vector2i mouseChunkIndex = hex_within_chunk(mouseHexPos);
+
+  std::pair<int, int> mouseChunkPair{mouseChunkPos.x, mouseChunkPos.y};
+
     // -------------------- EVENTS ----------------------------------------
     sf::Event event;
     while (window.pollEvent(event))
@@ -42,7 +59,7 @@ int main() {
           switch (event.key.code) {
             case sf::Keyboard::Escape:
               save(chunk_storage, "test_0");
-              window.close();  // Close the window
+              window.close();  // Save and close the window
               break;
 
             default: break;
@@ -50,20 +67,6 @@ int main() {
       default: break;
       }
     }
-
-
-    // -------------------- Coloring the hex the mouse is on -------------------
-
-    // sf::Vector2i pixel_mouse_pos = sf::Mouse::getPosition(window);              // Getting the mouse pos on screen
-    //
-    // sf::Vector2f world_mouse_pos = window.mapPixelToCoords(pixel_mouse_pos);    // Converting it to world position
-    //
-    // sf::Vector2i hex_pos = hex_from_pix(world_mouse_pos);
-    // sf::Vector2i chunk_pos = chunk_from_hex(hex_pos);
-    // sf::Vector2i hex_in_chunk_pos = hex_within_chunk(hex_pos);
-    //
-    // std::pair<int, int> mpos{chunk_pos.x,chunk_pos.y};
-    // chunk_storage.map[mpos].c[hex_in_chunk_pos.x][hex_in_chunk_pos.y].s.setFillColor(sf::Color(0, 255, 0));
 
     // ------------------- MOVEMENT INPUTS ------------------------------------
     float spd = 5.f;
@@ -79,8 +82,19 @@ int main() {
     // SETTING THE WINDOW'S VIEW
     window.setView(gameview);
     chunk_storage.setView(gameview);
+    for (Entity & entity : entities) {
+      entity.setView(gameview);
+    }
 
+    // DRAWING STUFF
     window.draw(chunk_storage);
+    for (Entity & entity : entities) {
+      window.draw(entity);
+      if (entity.isSelected()) {
+        window.draw(entity.getPreviewAt(mouseHexPos.x, mouseHexPos.y));
+      }
+    }
+
 
     window.display();
 
