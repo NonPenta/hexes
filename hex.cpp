@@ -14,13 +14,28 @@ Hex::Hex(int x_, int y_, std::string type_): type{type_}, p{x_, y_}, size{10}, s
 
   s.setOutlineThickness(1);
 
-  if (type_ != "p") {
-    if (type_ != "w") {
-      if (type_ != "w_"){
-        s.setFillColor(sf::Color(32, 31, 35)); // DEFAULT CASE
-      } else {s.setFillColor(sf::Color(32, 31, 35));} // IF 3 RESOLUTION
-    } else {s.setFillColor(sf::Color(127,127,255));} // IF 2 RESOLUTION
-  } else {s.setFillColor(sf::Color(0,255,0));} // IF 1 RESOLUTION
+  if (type_ == "player") {
+    s.setFillColor(sf::Color(0,255,0));
+  } else if (type_ == "water") {
+    s.setFillColor(sf::Color(127,127,255));
+  } else if (type_ == "wall") {
+    s.setFillColor(sf::Color(32, 31, 35));
+  } else if (type_ == "ennemy") {
+    s.setFillColor(sf::Color(255, 0, 0));
+  } else if (type_ == "ally") {
+    s.setFillColor(sf::Color(127,255,127));
+  } else if (type_ == "unknown") {
+    s.setFillColor(sf::Color(0, 0, 255));
+  } else {
+    s.setFillColor(sf::Color(32, 31, 35));
+  }
+
+  if (type_.rfind("preview", 0) == 0) {
+    s.setFillColor(sf::Color(s.getFillColor().r,
+                              s.getFillColor().g,
+                              s.getFillColor().b,
+                              150)); // SAME COLOR, OPACITY = 0.6
+  }
 
   s.setOutlineColor(sf::Color(48,47,51));
   s.setPosition(size*std::sqrt(3.0)*x_ + size*std::sqrt(3.0)/2.*y_, size*3.*y_/2.);
