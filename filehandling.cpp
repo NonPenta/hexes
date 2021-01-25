@@ -37,6 +37,10 @@ void saveChunk(std::pair<std::pair<int,int>,Chunk> chunk_pair, fs::path savepath
       }
     }
   }
+  if (n > 0) {
+    chunkfile << n << "/;";
+    n = 0;
+  }
   chunkfile.close();
 }
 
