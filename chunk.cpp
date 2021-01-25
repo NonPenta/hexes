@@ -30,7 +30,6 @@ void Chunk::draw(sf::RenderTarget& target, sf::RenderStates states) const {
       // --- IF THE HEXAGON IS VISIBLE ---
       if (c.at(x+32)[y+32].isInView(viewPos, viewSizeDelta)) // viewPos and viewSizeDelta to pass as const
         target.draw(c.at(x+32)[y+32], states);
-      }
     }
-
+  }
 }
