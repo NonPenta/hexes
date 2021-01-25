@@ -22,7 +22,7 @@ void ChunkMap::setChunk(std::pair<int,int> cPos, Chunk chunk) {
 }
 
 void ChunkMap::draw(sf::RenderTarget& target, sf::RenderStates states) const {
-  for (const auto &element : map) { // will check if anything in chunk is visible to further optimize
+  for (const auto &element : map) {
     target.draw(element.second, states);
   }
 }
