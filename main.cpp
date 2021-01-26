@@ -8,6 +8,7 @@
 #include "chunkmap.hpp"
 #include "filehandling.hpp"
 #include "entity.hpp"
+#include "events_handlers.hpp"
 
 int main() {
 
@@ -16,9 +17,13 @@ int main() {
     // chunk_storage initialisation
 
   ChunkMap chunk_storage = load("test_0");
-  std::vector<Entity> entities;
+  std::unordered_map<long int, Entity> entities;
+  std::unordered_map<long int, Entity> preview;
 
-  entities.push_back(Entity(0, 0, "player", 2));
+  Entity e{0, 0, "player", 2};
+  entities[e.getName()] = e;
+
+  sf::Vector2i previewOffset{0, 0};
 
   // ---- Window, window settings and view initialisation
   // sf::ContextSettings settings;
@@ -64,7 +69,16 @@ int main() {
 
             default: break;
           }
-      default: break;
+          break;
+        case sf::Event::MouseButtonPressed:
+          switch (event.mouseButton.button) {
+            case sf::Mouse::Left:
+            previewOffset = handleLeftClick(entities, preview, mouseHexPos);
+            break;
+            default: break;
+          }
+          break;
+        default: break;
       }
     }
 
@@ -74,7 +88,12 @@ int main() {
                   +spd*(sf::Keyboard::isKeyPressed(sf::Keyboard::Right)),       // if going right, add spd to x speed
                  (-spd*sf::Keyboard::isKeyPressed(sf::Keyboard::Up))            // if going up, add -spd to y speed
                   +spd*(sf::Keyboard::isKeyPressed(sf::Keyboard::Down)));       // if going down, add spd to x speed
-                                                                                // SEE ? NO IFS : OPTIMISATION !!!
+
+    // MOVING THE PREVIEW WHERE IT SHOULD BE
+    for (auto & p : preview) {
+      sf::Vector2i pPos = mouseHexPos+previewOffset;
+      p.second.moveTo(pPos.x, pPos.y);
+    }
 
     // CLEARING THE SCREEN
     window.clear();
@@ -82,19 +101,21 @@ int main() {
     // SETTING THE WINDOW'S VIEW
     window.setView(gameview);
     chunk_storage.setView(gameview);
-    for (Entity & entity : entities) {
-      entity.setView(gameview);
+    for (auto & entity : entities) {
+      entity.second.setView(gameview);
+    }
+    for (auto & p : preview) {
+      p.second.setView(gameview);
     }
 
     // DRAWING STUFF
     window.draw(chunk_storage);
-    for (Entity & entity : entities) {
-      window.draw(entity);
-      if (entity.isSelected()) {
-        window.draw(entity.getPreviewAt(mouseHexPos.x, mouseHexPos.y));
-      }
+    for (auto & entity : entities) {
+      window.draw(entity.second);
     }
-
+    for (auto & p : preview) {
+      window.draw(p.second);
+    }
 
     window.display();
 
