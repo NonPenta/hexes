@@ -13,6 +13,8 @@ public:
     Coord neighbor(int dir);
 
     int distance(Hex a);
+    void moveTo(int x, int y);
+    void updatePosition();
 
     bool isInView(sf::Vector2f viewPos, sf::Vector2f viewSizeDelta) const;
 
