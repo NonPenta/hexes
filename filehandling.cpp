@@ -96,7 +96,6 @@ ChunkMap load(std::string savename) {
       // --- PARSING FROM FILENAME ----
     for (int i = 0; i < (int)filenameStr.length(); i++) {
       char ch = filenameStr[i];
-      std::cout << ch << '\n';
       if (ch == ':') {
         chunkPos.push_back(std::stoi(tok));
         tok = "";
@@ -112,7 +111,6 @@ ChunkMap load(std::string savename) {
 
     // --- CREATING CHUNK ---
     Chunk c = Chunk{chunk_pos.first, chunk_pos.second};
-    std::cout << chunk_pos.first << ":" << chunk_pos.second << '\n';
     // --- CREATING FILE STREAM AND LINE
     std::fstream chunkfile(cfile.path());
     std::string line;
