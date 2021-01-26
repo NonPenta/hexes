@@ -8,6 +8,7 @@
 
 struct Entity : public sf::Drawable {
   private:
+    long int name;
     Coord pos;
     std::string type;
     int size;
@@ -25,6 +26,12 @@ struct Entity : public sf::Drawable {
     Entity(int x, int y);
     Entity(int x, int y, std::string type_);
     Entity(int x, int y, std::string type_, int size_);
+    Entity(long int name, int x, int y);
+    Entity(long int name, int x, int y, std::string type_);
+    Entity(long int name, int x, int y, std::string type_, int size_);
+
+    long int getName();
+    std::string getType();
 
     void select();
     void unSelect();
@@ -32,7 +39,11 @@ struct Entity : public sf::Drawable {
 
     void moveTo(int x, int y);
     void moveBy(int x, int y);
+    void updatePosition();
+    Coord getPos();
 
     Entity getPreviewAt(int x, int y);
+    Entity getEntityFromPreview();
+    bool hoveredByPos(sf::Vector2i pos);
     void setView(sf::View &view);
 };
