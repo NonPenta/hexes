@@ -148,23 +148,24 @@ std::pair<ChunkMap, std::unordered_map<std::string, Entity>> load(std::string sa
         // ---- PARSING ----
         for (int i = 0; i < (int)line.length(); i++) {
           char ch=line[i];
-          if (ch == ';') { // SEPARATOR
+          switch (ch) {
+            case ';':
+              c.setHexType(n%65-32,n/65-32, token);
 
-            c.setHexType(n%65-32,n/65-32, token);
-
-            prevTok = token;
-            token = "";
-            n++;
-
-          } else if (ch == '/') { // SAME CONTENT, plus some shit because its n/, with n an int to compress file
-              if (isInt(token)) {
-                for (int i = 0; i < std::stoi(token) - 1; i++) {
-                  c.setHexType(n%65-32,n/65-32, prevTok);
-                  n++;
-                }
-              }
+              prevTok = token;
+              token = "";
+              n++;
+              break;
+            case '/':
+              for (int i = 0; i < std::stoi(token) - 1; i++) {
+                c.setHexType(n%65-32,n/65-32, prevTok);
+                n++; }
               token = prevTok;
-          } else {token += ch;} // ADD TO CONTENT
+              break;
+            default:
+              token += ch;
+              break;
+          } // ADD TO CONTENT
         }
       }
       // --- PUT CHUNK CONTENT IN MAP ---
