@@ -3,7 +3,7 @@
 #include <SFML/Graphics.hpp>
 #include "hex.hpp"
 
-struct Chunk : public sf::Drawable {
+class Chunk : public sf::Drawable {
   public:
     Chunk();
     Chunk(int x_, int y_);

@@ -4,7 +4,7 @@
 #include <SFML/Graphics.hpp>
 #include "chunk.hpp"
 
-struct ChunkMap : public sf::Drawable {
+class ChunkMap : public sf::Drawable {
 public:
   ChunkMap();
   ChunkMap(int x0, int y0, int dx, int dy);

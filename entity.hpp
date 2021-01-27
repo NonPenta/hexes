@@ -6,7 +6,7 @@
 #include "hex.hpp"
 #include "coordinates.hpp"
 
-struct Entity : public sf::Drawable {
+class Entity : public sf::Drawable {
   private:
     std::string name;
     Coord pos;

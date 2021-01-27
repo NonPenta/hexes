@@ -4,8 +4,8 @@
 #include "coordinates.hpp"
 
 
-struct Hex : public sf::Drawable {
-public:
+class Hex : public sf::Drawable {
+  public:
     Hex();
     Hex(int x_, int y_);
     Hex(int x_, int y_, std::string type_);
