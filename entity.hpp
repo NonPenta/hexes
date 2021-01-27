@@ -11,7 +11,8 @@ struct Entity : public sf::Drawable {
     std::string name;
     Coord pos;
     std::string type;
-    int size;
+    int width;
+    int height;
     bool selected;
     std::unordered_map<std::pair<int,int>, Hex, boost::hash<std::pair<int,int>>> members;
 
@@ -26,13 +27,17 @@ struct Entity : public sf::Drawable {
     Entity(int x, int y);
     Entity(int x, int y, std::string type_);
     Entity(int x, int y, std::string type_, int size_);
+    Entity(int x, int y, std::string type_, int width_, int height_);
+
     Entity(std::string name, int x, int y);
     Entity(std::string name, int x, int y, std::string type_);
     Entity(std::string name, int x, int y, std::string type_, int size_);
+    Entity(std::string name, int x, int y, std::string type_, int width_, int height_);
 
     std::string getName();
     std::string getType();
-    int getSize();
+    int getWidth();
+    int getHeight();
 
     void select();
     void unSelect();

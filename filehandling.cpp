@@ -67,8 +67,8 @@ void save(ChunkMap cmap, std::unordered_map<std::string, Entity> entities, std::
   entityfile.open(savepath/"entitydata", std::fstream::app);
 
   for (auto & entityPair : entities) {
-    entityfile << entityPair.first << ":" << entityPair.second.getType() << ":" << entityPair.second.getPos().x << ":" << entityPair.second.getPos().y << ":" << entityPair.second.getSize() << ";";
-  }             /* string UUID */        /* --------- type --------- */         /* ------ x position ------ */        /* ------- y position ------- */        /* ----- Entity size ----- */
+    entityfile << entityPair.first << ":" << entityPair.second.getType() << ":" << entityPair.second.getPos().x << ":" << entityPair.second.getPos().y << ":" << entityPair.second.getWidth() << ":" << entityPair.second.getHeight() << ";";
+  }             /* string UUID */        /* --------- type --------- */         /* ------ x position ------ */        /* ------- y position ------- */        /* ----- Entity width ----- */        /* ------ Entity height ------ */
 
   // -- JOINING THE THREADS --
   for (long unsigned int i = 0; i < save_threads.size(); i++) {
