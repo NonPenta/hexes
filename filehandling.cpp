@@ -9,7 +9,7 @@ bool isInt(const std::string s){
   if (s.length() == 0) {
     return false;
   }
-  return s.find_first_not_of( "-0123456789" ) == std::string::npos;
+  return s.find_first_not_of("-0123456789") == std::string::npos;
 }
 
 void saveChunk(std::pair<std::pair<int,int>,Chunk> chunk_pair, fs::path savepath) {
@@ -23,7 +23,7 @@ void saveChunk(std::pair<std::pair<int,int>,Chunk> chunk_pair, fs::path savepath
   for (int y = -32; y <= 32; y++) { // Looping through chunk's hex coordinates
     for (int x = -32; x <= 32; x++) {
       // Add hex info to file.
-      // if the type didnt change, just add n/, with n the number of identical things ; else the new type
+      // if the type didnt change, just add n/, with n the number of identical things ; then the new type else only the new type
       if (chunk_pair.second.getc()[x+32][y+32].getType() == lastType) {
         n++;
       } else {
@@ -93,6 +93,7 @@ std::pair<ChunkMap, std::unordered_map<std::string, Entity>> load(std::string sa
   savepath /= savename;
   std::cout << "savepath done" << '\n';
 
+  // --- going through directory items
   for (const auto& file : fs::directory_iterator(savepath)) {
     const auto filenameStr = file.path().filename().string();
     std::cout << "currently at file : " << filenameStr << '\n';
@@ -233,6 +234,6 @@ std::pair<ChunkMap, std::unordered_map<std::string, Entity>> load(std::string sa
       }
     }
   }
-
+  // --- returning the built data
   return std::make_pair(map, entities);
 }
