@@ -235,5 +235,5 @@ std::pair<ChunkMap, std::unordered_map<std::string, Entity>> load(std::string sa
     }
   }
   // --- returning the built data
-  return std::make_pair(map, entities);
+  return {map, entities};
 }
