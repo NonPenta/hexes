@@ -1,7 +1,9 @@
 #include "events_handlers.hpp"
 #include <iostream>
 
-sf::Vector2i handleLeftClick(std::unordered_map<long int, Entity> &entities, std::unordered_map<long int, Entity> &preview, sf::Vector2i mouseHexPos) {
+sf::Vector2i handleLeftClick(std::unordered_map<std::string, Entity> &entities,
+                            std::unordered_map<std::string, Entity> &preview,
+                            sf::Vector2i mouseHexPos) {
   bool previewMod = false;
   for (auto & entityPair : entities) {
     // --- If the mouse hovers over the entity :
@@ -15,7 +17,7 @@ sf::Vector2i handleLeftClick(std::unordered_map<long int, Entity> &entities, std
         // The entity isnt selected
         entityPair.second.select(); // Select it
         for (auto & previewPair : preview) { // Unselect any selected entities
-          long int name = previewPair.second.getName();
+          std::string name = previewPair.second.getName();
           entities[name].unSelect();
         }
         preview.clear(); // Clear other preview
@@ -28,7 +30,7 @@ sf::Vector2i handleLeftClick(std::unordered_map<long int, Entity> &entities, std
 
   if (previewMod == false) {
     for (auto & previewPair : preview) {
-      long int name = previewPair.second.getName();
+      std::string name = previewPair.second.getName();
       entities[name] = previewPair.second.getEntityFromPreview();
     }
     preview.clear();

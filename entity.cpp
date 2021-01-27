@@ -1,21 +1,23 @@
+#include <boost/uuid/random_generator.hpp>
+#include <boost/uuid/uuid_io.hpp>
 #include <ctime>
 #include <iostream>
 #include "entity.hpp"
 
 // --- CONSTRUCTORS ---
 Entity::Entity() {}
-Entity::Entity(int x, int y) : name{(long int) std::time(nullptr)}, pos{x, y}, type{"unknown"}, size{1}, selected{0}, members{}, viewPos{}, viewSizeDelta{} { members[std::pair<int,int>{x,y}] = Hex(x, y, type); }
-Entity::Entity(int x, int y, std::string type_) : name{(long int) std::time(nullptr)}, pos{x, y}, type{type_}, size{1}, selected{0}, members{}, viewPos{}, viewSizeDelta{} { members[std::pair<int,int>{x,y}] = Hex(x, y, type_); }
-Entity::Entity(int x, int y, std::string type_, int size_) : name{(long int) std::time(nullptr)}, pos{x, y}, type{type_}, size{size_}, selected{0}, members{}, viewPos{}, viewSizeDelta{} {
+Entity::Entity(int x, int y) : name{boost::uuids::to_string(boost::uuids::random_generator()())}, pos{x, y}, type{"unknown"}, size{1}, selected{0}, members{}, viewPos{}, viewSizeDelta{} { members[std::pair<int,int>{x,y}] = Hex(x, y, type); }
+Entity::Entity(int x, int y, std::string type_) : name{boost::uuids::to_string(boost::uuids::random_generator()())}, pos{x, y}, type{type_}, size{1}, selected{0}, members{}, viewPos{}, viewSizeDelta{} { members[std::pair<int,int>{x,y}] = Hex(x, y, type_); }
+Entity::Entity(int x, int y, std::string type_, int size_) : name{boost::uuids::to_string(boost::uuids::random_generator()())}, pos{x, y}, type{type_}, size{size_}, selected{0}, members{}, viewPos{}, viewSizeDelta{} {
   for (int xi = x; xi < x+size; xi++) {
     for (int yi = y; yi < y+size; yi++) {
       members[std::pair<int,int>{xi, yi}] = Hex(xi, yi, type_);
     }
   }
 }
-Entity::Entity(long int name, int x, int y) : name{name}, pos{x, y}, type{"unknown"}, size{1}, selected{0}, members{}, viewPos{}, viewSizeDelta{} { members[std::pair<int,int>{x,y}] = Hex(x, y, type); }
-Entity::Entity(long int name, int x, int y, std::string type_) : name{name}, pos{x, y}, type{type_}, size{1}, selected{0}, members{}, viewPos{}, viewSizeDelta{} { members[std::pair<int,int>{x,y}] = Hex(x, y, type_); }
-Entity::Entity(long int name, int x, int y, std::string type_, int size_) : name{name}, pos{x, y}, type{type_}, size{size_}, selected{0}, members{}, viewPos{}, viewSizeDelta{} {
+Entity::Entity(std::string name, int x, int y) : name{name}, pos{x, y}, type{"unknown"}, size{1}, selected{0}, members{}, viewPos{}, viewSizeDelta{} { members[std::pair<int,int>{x,y}] = Hex(x, y, type); }
+Entity::Entity(std::string name, int x, int y, std::string type_) : name{name}, pos{x, y}, type{type_}, size{1}, selected{0}, members{}, viewPos{}, viewSizeDelta{} { members[std::pair<int,int>{x,y}] = Hex(x, y, type_); }
+Entity::Entity(std::string name, int x, int y, std::string type_, int size_) : name{name}, pos{x, y}, type{type_}, size{size_}, selected{0}, members{}, viewPos{}, viewSizeDelta{} {
   for (int xi = x; xi < x+size; xi++) {
     for (int yi = y; yi < y+size; yi++) {
       members[std::pair<int,int>{xi, yi}] = Hex(xi, yi, type_);
@@ -25,9 +27,9 @@ Entity::Entity(long int name, int x, int y, std::string type_, int size_) : name
 
 // --- PUBLIC METHODS ---
 
-long int Entity::getName() { return name; }
+std::string Entity::getName() { return name; }
 std::string Entity::getType() { return type; }
-
+int Entity::getSize() { return size; }
 
 void Entity::select() { selected = true; }
 void Entity::unSelect() { selected = false; }

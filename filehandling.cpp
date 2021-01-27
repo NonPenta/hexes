@@ -9,12 +9,11 @@ bool isInt(const std::string s){
   if (s.length() == 0) {
     return false;
   }
-  return s.find_first_not_of( "+-0123456789" ) == std::string::npos;
+  return s.find_first_not_of( "0123456789" ) == std::string::npos;
 }
 
 void saveChunk(std::pair<std::pair<int,int>,Chunk> chunk_pair, fs::path savepath) {
   std::string lastType = "no.";
-  std::cout << "saving chunk, should be in thread" << '\n';
 
   // create file with name : "chunk_x:chunk_y"
   std::fstream chunkfile;
@@ -24,7 +23,7 @@ void saveChunk(std::pair<std::pair<int,int>,Chunk> chunk_pair, fs::path savepath
   for (int y = -32; y <= 32; y++) { // Looping through chunk's hex coordinates
     for (int x = -32; x <= 32; x++) {
       // Add hex info to file.
-      // if the type didnt change, just add / ; else the new type
+      // if the type didnt change, just add n/, with n the number of identical things ; else the new type
       if (chunk_pair.second.getc()[x+32][y+32].getType() == lastType) {
         n++;
       } else {
@@ -45,7 +44,7 @@ void saveChunk(std::pair<std::pair<int,int>,Chunk> chunk_pair, fs::path savepath
 }
 
 
-void save(ChunkMap cmap, std::string savename) {
+void save(ChunkMap cmap, std::unordered_map<std::string, Entity> entities, std::string savename) {
 
   fs::path savepath = ".hge:saves";
   savepath /= savename;
@@ -63,6 +62,14 @@ void save(ChunkMap cmap, std::string savename) {
   for (const auto &chunk_pair : cmap.getMap()) {
     save_threads.push_back(std::thread(saveChunk, chunk_pair, savepath));
   }
+  // -- USE THIS THREAD TO SAVE ENTITY DATA --
+  std::fstream entityfile;
+  entityfile.open(savepath/"entitydata", std::fstream::app);
+
+  for (auto & entityPair : entities) {
+    entityfile << entityPair.first << ":" << entityPair.second.getType() << ":" << entityPair.second.getPos().x << ":" << entityPair.second.getPos().y << ":" << entityPair.second.getSize() << ";";
+  }             /* string UUID */        /* --------- type --------- */         /* ------ x position ------ */        /* ------- y position ------- */        /* ----- Entity size ----- */
+
   // -- JOINING THE THREADS --
   for (long unsigned int i = 0; i < save_threads.size(); i++) {
     save_threads[i].join();

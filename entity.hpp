@@ -8,7 +8,7 @@
 
 struct Entity : public sf::Drawable {
   private:
-    long int name;
+    std::string name;
     Coord pos;
     std::string type;
     int size;
@@ -26,12 +26,13 @@ struct Entity : public sf::Drawable {
     Entity(int x, int y);
     Entity(int x, int y, std::string type_);
     Entity(int x, int y, std::string type_, int size_);
-    Entity(long int name, int x, int y);
-    Entity(long int name, int x, int y, std::string type_);
-    Entity(long int name, int x, int y, std::string type_, int size_);
+    Entity(std::string name, int x, int y);
+    Entity(std::string name, int x, int y, std::string type_);
+    Entity(std::string name, int x, int y, std::string type_, int size_);
 
-    long int getName();
+    std::string getName();
     std::string getType();
+    int getSize();
 
     void select();
     void unSelect();

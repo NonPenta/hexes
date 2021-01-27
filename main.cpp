@@ -17,8 +17,8 @@ int main() {
     // chunk_storage initialisation
 
   ChunkMap chunk_storage = load("test_0");
-  std::unordered_map<long int, Entity> entities;
-  std::unordered_map<long int, Entity> preview;
+  std::unordered_map<std::string, Entity> entities;
+  std::unordered_map<std::string, Entity> preview;
 
   Entity e{0, 0, "player", 2};
   entities[e.getName()] = e;
@@ -63,7 +63,7 @@ int main() {
         case sf::Event::KeyPressed:
           switch (event.key.code) {
             case sf::Keyboard::Escape:
-              save(chunk_storage, "test_0");
+              save(chunk_storage, entities, "test_0");
               window.close();  // Save and close the window
               break;
 
