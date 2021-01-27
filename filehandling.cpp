@@ -9,15 +9,15 @@ bool isInt(const std::string s){
   if (s.length() == 0) {
     return false;
   }
-  return s.find_first_not_of( "0123456789" ) == std::string::npos;
+  return s.find_first_not_of( "-0123456789" ) == std::string::npos;
 }
 
 void saveChunk(std::pair<std::pair<int,int>,Chunk> chunk_pair, fs::path savepath) {
   std::string lastType = "no.";
 
   // create file with name : "chunk_x:chunk_y"
-  std::fstream chunkfile;
-  chunkfile.open(savepath/(std::to_string(chunk_pair.first.first)+":"+std::to_string(chunk_pair.first.second)), std::fstream::app);
+  std::fstream chunkFile;
+  chunkFile.open(savepath/(std::to_string(chunk_pair.first.first)+":"+std::to_string(chunk_pair.first.second)), std::fstream::app);
 
   int n = 0;
   for (int y = -32; y <= 32; y++) { // Looping through chunk's hex coordinates
@@ -28,19 +28,19 @@ void saveChunk(std::pair<std::pair<int,int>,Chunk> chunk_pair, fs::path savepath
         n++;
       } else {
         if (n > 0) {
-          chunkfile << n << "/;";
+          chunkFile << n << "/;";
           n = 0;
         }
         lastType = chunk_pair.second.getc()[x+32][y+32].getType();
-        chunkfile << lastType + ";";
+        chunkFile << lastType + ";";
       }
     }
   }
   if (n > 0) {
-    chunkfile << n << "/;";
+    chunkFile << n << "/;";
     n = 0;
   }
-  chunkfile.close();
+  chunkFile.close();
 }
 
 
@@ -82,80 +82,156 @@ void save(ChunkMap cmap, std::unordered_map<std::string, Entity> entities, std::
   }
 }
 
-ChunkMap load(std::string savename) {
+std::pair<ChunkMap, std::unordered_map<std::string, Entity>> load(std::string savename) {
 
   std::cout << "started loading" << '\n';
-
+  // --- INITIALISATION ---
   ChunkMap map = ChunkMap();
+  std::unordered_map<std::string, Entity> entities;
 
   fs::path savepath = ".hge:saves";
   savepath /= savename;
-
   std::cout << "savepath done" << '\n';
-  for (const auto& cfile : fs::directory_iterator(savepath)) {
-    const auto filenameStr = cfile.path().filename().string();
+
+  for (const auto& file : fs::directory_iterator(savepath)) {
+    const auto filenameStr = file.path().filename().string();
     std::cout << "currently at file : " << filenameStr << '\n';
 
-    // ---- GETTING CHUNK POSITION ----
-    std::vector<int> chunkPos;
+    // if the file is a chunk file
+    bool isChunk = true;
     std::string tok;
 
-      // --- PARSING FROM FILENAME ----
     for (int i = 0; i < (int)filenameStr.length(); i++) {
       char ch = filenameStr[i];
       if (ch == ':') {
-        chunkPos.push_back(std::stoi(tok));
+        isChunk = isInt(tok);
         tok = "";
       } else {tok += ch;}
     }
-    chunkPos.push_back(std::stoi(tok)); // -- PUSHING BACK THE LAST TOKEN AAAAAAAAAA I STOOPID
+    isChunk = isInt(tok) && isChunk;
+
+    if (isChunk) { // do chunk shit
+           // ---- GETTING CHUNK POSITION ----
+      std::vector<int> chunkPos;
+      std::string tok;
+
+        // --- PARSING FROM FILENAME ----
+      for (int i = 0; i < (int)filenameStr.length(); i++) {
+        char ch = filenameStr[i];
+        if (ch == ':') {
+          chunkPos.push_back(std::stoi(tok));
+          tok = "";
+        } else {tok += ch;}
+      }
+      chunkPos.push_back(std::stoi(tok)); // -- PUSHING BACK THE LAST TOKEN
 
 
-      // --- CONVERTING FROM VECTOR TO PAIR
-    std::pair<int,int> chunk_pos;
-    chunk_pos.first = chunkPos[0];
-    chunk_pos.second = chunkPos[1];
+        // --- CONVERTING FROM VECTOR TO PAIR
+      std::pair<int,int> chunk_pos;
+      chunk_pos.first = chunkPos[0];
+      chunk_pos.second = chunkPos[1];
 
-    // --- CREATING CHUNK ---
-    Chunk c = Chunk{chunk_pos.first, chunk_pos.second};
-    // --- CREATING FILE STREAM AND LINE
-    std::fstream chunkfile(cfile.path());
-    std::string line;
+      // --- CREATING CHUNK ---
+      Chunk c = Chunk{chunk_pos.first, chunk_pos.second};
+      // --- CREATING FILE STREAM AND LINE
+      std::fstream chunkFile(file.path());
+      std::string line;
 
-    // --- TREATING FILE ---
-    while (std::getline(chunkfile, line)) {
+      // --- TREATING FILE ---
+      while (std::getline(chunkFile, line)) {
 
-      // --- PARSING SETUP ---
-      std::string prevTok;
-      std::string token;
-      int n = 0;
+        // --- PARSING SETUP ---
+        std::string prevTok;
+        std::string token;
+        int n = 0;
 
-      // ---- PARSING ----
-      for (int i = 0; i < (int)line.length(); i++) {
-        char ch=line[i];
-        if (ch == ';') { // SEPARATOR
+        // ---- PARSING ----
+        for (int i = 0; i < (int)line.length(); i++) {
+          char ch=line[i];
+          if (ch == ';') { // SEPARATOR
 
-          c.setHexType(n%65-32,n/65-32, token);
+            c.setHexType(n%65-32,n/65-32, token);
 
-          prevTok = token;
-          token = "";
-          n++;
+            prevTok = token;
+            token = "";
+            n++;
 
-        } else if (ch == '/') { // SAME CONTENT, plus some shit because its n/, with n an int to compress file
-            if (isInt(token)) {
-              for (int i = 0; i < std::stoi(token) - 1; i++) {
-                c.setHexType(n%65-32,n/65-32, prevTok);
-                n++;
+          } else if (ch == '/') { // SAME CONTENT, plus some shit because its n/, with n an int to compress file
+              if (isInt(token)) {
+                for (int i = 0; i < std::stoi(token) - 1; i++) {
+                  c.setHexType(n%65-32,n/65-32, prevTok);
+                  n++;
+                }
               }
-            }
-            token = prevTok;
-        } else {token += ch;} // ADD TO CONTENT
+              token = prevTok;
+          } else {token += ch;} // ADD TO CONTENT
+        }
+      }
+      // --- PUT CHUNK CONTENT IN MAP ---
+      map.setChunk(chunk_pos, c);
+      // END OF CHUNK SHIT
+    } else { // NOT CHUNK SO DO ENTITY SHIT
+
+      std::fstream entityFile(file.path());
+      std::string line;
+
+      while (std::getline(entityFile, line)) {
+        // declaring entity data : segments to be retrieved from file, segment number
+        int segment = 0;
+
+        std::string token;
+
+        std::string entityName;
+        std::string entityType;
+        int entityX;
+        int entityY;
+        int entitySize;
+
+        for (int i = 0; i < (int)line.length(); i++) {
+          char ch = line[i];
+
+          switch (ch) {
+            case ';': // Has already been through 4 ':' : has to treat last segment
+              entitySize = std::stoi(token);
+              // Adding the entity to entities & resetting segment and token
+              segment = 0;
+              token = "";
+              entities[entityName] = Entity{entityName, entityX, entityY, entityType, entitySize};
+              break;
+            case ':':
+              switch (segment) {
+                case 0:
+                  entityName = token;
+                  segment++;
+                  token = "";
+                  break;
+                case 1:
+                  entityType = token;
+                  segment++;
+                  token = "";
+                  break;
+                case 2:
+                  entityX = std::stoi(token);
+                  segment++;
+                  token = "";
+                  break;
+                case 3:
+                  entityY = std::stoi(token);
+                  token = "";
+                  break;
+                default: break;
+              }
+              break;
+            default:
+              token += ch;
+              break;
+          }
+        }
+
+
       }
     }
-    // --- PUT CHUNK CONTENT IN MAP ---
-    map.setChunk(chunk_pos, c);
-
   }
 
-  return map;
+  return std::make_pair(map, entities);
 }

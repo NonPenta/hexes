@@ -16,12 +16,16 @@ int main() {
 
     // chunk_storage initialisation
 
-  ChunkMap chunk_storage = load("test_0");
-  std::unordered_map<std::string, Entity> entities;
+  std::pair<ChunkMap, std::unordered_map<std::string, Entity>> loadPair;
+  loadPair = load("test_0");
+
+  ChunkMap chunk_storage = loadPair.first;
+  std::unordered_map<std::string, Entity> entities = loadPair.second;
+
   std::unordered_map<std::string, Entity> preview;
 
-  Entity e{0, 0, "player", 2};
-  entities[e.getName()] = e;
+  // Entity e{0, 0, "player", 2};
+  // entities[e.getName()] = e;
 
   sf::Vector2i previewOffset{0, 0};
 
