@@ -16,7 +16,7 @@ Hex::Hex(int x_, int y_, std::string type_): type{type_}, p{x_, y_}, size{10}, s
 
   bool isPreview = (type_.rfind("preview", 0) == 0);
   std::string checkType = isPreview ? type.substr(7) : type;
-  
+
   if (checkType == "player") {
     s.setFillColor(sf::Color(0,255,0));
   } else if (checkType == "water") {
@@ -29,6 +29,8 @@ Hex::Hex(int x_, int y_, std::string type_): type{type_}, p{x_, y_}, size{10}, s
     s.setFillColor(sf::Color(127,255,127));
   } else if (checkType == "unknown") {
     s.setFillColor(sf::Color(0, 0, 255));
+  } else if (checkType == "mousePointer") {
+    s.setFillColor(sf::Color(198, 255, 255));
   } else {
     s.setFillColor(sf::Color(32, 31, 35));
   }
