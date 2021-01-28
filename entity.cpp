@@ -66,6 +66,7 @@ void Entity::updatePosition() {
 Coord Entity::getPos() { return pos; }
 
 Entity Entity::getPreviewAt(int x, int y) { return Entity(name, x, y, "preview"+type, width, height); }
+Entity Entity::getPreviewAt(sf::Vector2i p) { return Entity(name, p.x, p.y, "preview"+type, width, height); }
 Entity Entity::getEntityFromPreview() { return Entity(name, pos.x, pos.y, type.substr(7), width, height); }
 bool Entity::hoveredByPos(sf::Vector2i pos_) { return (pos_.x>=pos.x)&&(pos_.x<pos.x+width)&&(pos_.y>=pos.y)&&(pos_.y<pos.y+height); }
 void Entity::setView(sf::View& view) {
