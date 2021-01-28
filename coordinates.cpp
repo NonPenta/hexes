@@ -19,9 +19,13 @@ int Coord::abs() {
 }
 
 Coord operator+(Coord a, Coord b)   { return Coord(a.x+b.x, a.y+b.y); }
+Coord operator+(Coord a, sf::Vector2i b)   { return Coord(a.x+b.x, a.y+b.y); }
 Coord operator-(Coord a, Coord b)   { return Coord(a.x-b.x, a.y-b.y); }
+Coord operator-(Coord a, sf::Vector2i b)   { return Coord(a.x-b.x, a.y-b.y); }
 Coord operator*(Coord a, int n)     { return Coord(a.x*n, a.y*n); }
 Coord operator*(int n, Coord a)     { return a*n; }
 Coord operator/(Coord a, int n)     { return Coord(a.x/n, a.y/n); }
 bool operator==(Coord a, Coord b)   { return a.x == b.x && a.y == b.y ; }
+bool operator==(Coord a, sf::Vector2i b)   { return a.x == b.x && a.y == b.y ; }
 bool operator!=(Coord a, Coord b)   { return !(a==b); }
+bool operator!=(Coord a, sf::Vector2i b)   { return !(a==b); }
