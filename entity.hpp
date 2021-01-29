@@ -44,11 +44,13 @@ class Entity : public sf::Drawable {
     bool isSelected();
 
     void moveTo(int x, int y);
+    void moveTo(sf::Vector2i p);
     void moveBy(int x, int y);
     void updatePosition();
-    Coord getPos();
+    sf::Vector2i getPos();
 
     Entity getPreviewAt(int x, int y);
+    Entity getPreviewAt(sf::Vector2i p);
     Entity getEntityFromPreview();
     bool hoveredByPos(sf::Vector2i pos);
     void setView(sf::View &view);
