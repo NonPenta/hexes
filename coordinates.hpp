@@ -1,4 +1,5 @@
 #pragma once
+#include <SFML/Graphics.hpp>
 struct Coord {
   union {
     int v[2];
@@ -16,8 +17,12 @@ struct Coord {
 };
 
 Coord operator+(Coord a, Coord b);
+Coord operator+(Coord a, sf::Vector2i b);
 Coord operator-(Coord a, Coord b);
+Coord operator-(Coord a, sf::Vector2i b);
 Coord operator*(Coord a, double d);
 Coord operator/(Coord a, double d);
 bool operator==(Coord a, Coord b);
+bool operator==(Coord a, sf::Vector2i b);
 bool operator!=(Coord a, Coord b);
+bool operator!=(Coord a, sf::Vector2i b);
