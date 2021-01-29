@@ -185,10 +185,10 @@ std::pair<ChunkMap, std::unordered_map<std::string, Entity>> load(std::string sa
 
         std::string entityName;
         std::string entityType;
-        int entityX;
-        int entityY;
-        int entityWidth;
-        int entityHeight;
+        int entityX = 0;
+        int entityY = 0;
+        int entityWidth = 1;
+        int entityHeight = 1;
 
         for (int i = 0; i < (int)line.length(); i++) {
           char ch = line[i];
