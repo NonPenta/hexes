@@ -34,24 +34,25 @@ class Entity : public sf::Drawable {
     Entity(std::string name, int x, int y, std::string type_, int size_);
     Entity(std::string name, int x, int y, std::string type_, int width_, int height_);
 
-    std::string getName();
-    std::string getType();
-    int getWidth();
-    int getHeight();
+    std::string getName() const;
+    std::string getType() const;
+    int getWidth() const;
+    int getHeight() const;
+    int getMemberSize() const;
 
     void select();
     void unSelect();
-    bool isSelected();
+    bool isSelected() const;
 
     void moveTo(int x, int y);
     void moveTo(sf::Vector2i p);
     void moveBy(int x, int y);
     void updatePosition();
-    sf::Vector2i getPos();
+    sf::Vector2i getPos() const;
 
-    Entity getPreviewAt(int x, int y);
-    Entity getPreviewAt(sf::Vector2i p);
-    Entity getEntityFromPreview();
-    bool hoveredByPos(sf::Vector2i pos);
+    Entity getPreviewAt(int x, int y) const;
+    Entity getPreviewAt(sf::Vector2i p) const;
+    Entity getEntityFromPreview() const;
+    bool hoveredByPos(sf::Vector2i pos) const;
     void setView(sf::View &view);
 };

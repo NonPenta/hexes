@@ -43,15 +43,15 @@ Entity::Entity(std::string name_, int x, int y, std::string type_, int width_, i
 
 // --- PUBLIC METHODS ---
 
-std::string Entity::getName() { return name; }
-std::string Entity::getType() { return type; }
-int Entity::getWidth() { return width; }
-int Entity::getHeight() { return height; }
-
+std::string Entity::getName() const { return name; }
+std::string Entity::getType() const { return type; }
+int Entity::getWidth() const { return width; }
+int Entity::getHeight() const { return height; }
+int Entity::getMemberSize() const { return members.size(); }
 
 void Entity::select() { selected = true; }
 void Entity::unSelect() { selected = false; }
-bool Entity::isSelected() { return selected; }
+bool Entity::isSelected() const { return selected; }
 
 void Entity::moveTo(int x, int y) { pos = Coord{x, y}; updatePosition(); }
 void Entity::moveTo(sf::Vector2i p) { pos = Coord{p.x, p.y}; updatePosition(); }
@@ -64,12 +64,12 @@ void Entity::updatePosition() {
     }
   }
 }
-sf::Vector2i Entity::getPos() { return sf::Vector2i(pos.x, pos.y); }
+sf::Vector2i Entity::getPos() const { return sf::Vector2i(pos.x, pos.y); }
 
-Entity Entity::getPreviewAt(int x, int y) { return Entity(name, x, y, "preview"+type, width, height); }
-Entity Entity::getPreviewAt(sf::Vector2i p) { return Entity(name, p.x, p.y, "preview"+type, width, height); }
-Entity Entity::getEntityFromPreview() { return Entity(name, pos.x, pos.y, type.substr(7), width, height); }
-bool Entity::hoveredByPos(sf::Vector2i pos_) { return (pos_.x>=pos.x)&&(pos_.x<pos.x+width)&&(pos_.y>=pos.y)&&(pos_.y<pos.y+height); }
+Entity Entity::getPreviewAt(int x, int y) const { return Entity(name, x, y, "preview"+type, width, height); }
+Entity Entity::getPreviewAt(sf::Vector2i p) const { return Entity(name, p.x, p.y, "preview"+type, width, height); }
+Entity Entity::getEntityFromPreview() const { return Entity(name, pos.x, pos.y, type.substr(7), width, height); }
+bool Entity::hoveredByPos(sf::Vector2i pos_) const { return (pos_.x>=pos.x)&&(pos_.x<pos.x+width)&&(pos_.y>=pos.y)&&(pos_.y<pos.y+height); }
 void Entity::setView(sf::View& view) {
   viewPos = view.getCenter();
   viewSizeDelta = sf::Vector2f{view.getSize().x/2, view.getSize().y/2};
