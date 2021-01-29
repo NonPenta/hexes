@@ -1,3 +1,4 @@
+#include <iostream>
 #include "events_handlers.hpp"
 #include "hex_utils.hpp"
 #include "filehandling.hpp"
@@ -54,7 +55,7 @@ std::unique_ptr<InputMode> SelectionMode::keyPressHandler(Context &context, sf::
   }
 }
 
-void SelectionMode::updateContext(Context context) { mousePos = sf::Mouse::getPosition(context.window); }
+void SelectionMode::updateContext(Context context) { mousePos = hex_from_pix(context.window.mapPixelToCoords(sf::Mouse::getPosition(context.window))); }
 void SelectionMode::draw(sf::RenderTarget &target, sf::RenderStates states) const {
   target.draw(Hex{mousePos.x, mousePos.y, "mousePointer"}, states);
 }
@@ -110,8 +111,9 @@ std::unique_ptr<InputMode> MovementMode::keyPressHandler(Context &context, sf::E
 
 void MovementMode::updateContext(Context context) {
   preview.moveTo(hex_from_pix(context.window.mapPixelToCoords(sf::Mouse::getPosition(context.window)))+mouseDelta);
-
+  preview.setView(context.view);
 }
+
 void MovementMode::draw(sf::RenderTarget &target, sf::RenderStates states) const {
   target.draw(preview, states);
 }
