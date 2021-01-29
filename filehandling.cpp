@@ -192,9 +192,10 @@ std::pair<ChunkMap, std::unordered_map<std::string, Entity>> load(std::string sa
 
         for (int i = 0; i < (int)line.length(); i++) {
           char ch = line[i];
-
+          std::cout << ch;
           switch (ch) {
             case ';': // Has already been through 4 ':' : has to treat last segment
+              std::cout << "segment " << segment << " last" << '\n';
               entityHeight = std::stoi(token);
               // Adding the entity to entities & resetting segment and token
               segment = 0;
@@ -202,6 +203,7 @@ std::pair<ChunkMap, std::unordered_map<std::string, Entity>> load(std::string sa
               entities[entityName] = Entity{entityName, entityX, entityY, entityType, entityWidth, entityHeight};
               break;
             case ':':
+              std::cout << '\n' << "segment " << segment << " ended" << '\n';
               switch (segment) {
                 case 0:
                   entityName = token;
@@ -220,10 +222,12 @@ std::pair<ChunkMap, std::unordered_map<std::string, Entity>> load(std::string sa
                   break;
                 case 3:
                   entityY = std::stoi(token);
+                  segment++;
                   token = "";
                   break;
                 case 4:
                   entityWidth = std::stoi(token);
+                  segment++;
                   token = "";
                   break;
                 default: break;
