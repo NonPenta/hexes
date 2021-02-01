@@ -31,7 +31,7 @@ Hex::Hex(int x_, int y_, std::string type_): type{type_}, p{x_, y_}, size{10}, s
   } else if (checkType == "unknown") {
     s.setFillColor(sf::Color(0, 0, 255));
   } else if (checkType == "mousePointer") {
-    s.setFillColor(sf::Color(198, 255, 255));
+    s.setFillColor(sf::Color(168, 243, 243, 150));
   } else {
     s.setFillColor(sf::Color(32, 31, 35));
   }
