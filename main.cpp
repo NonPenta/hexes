@@ -48,7 +48,7 @@ int main() {
     while (window.pollEvent(event))
     {
       Context context{chunkStorage, entities, window, gameview};
-      std::unique_ptr<InputMode> result = currentMode->eventHandler(context, event);
+      std::unique_ptr<InputMode> result = currentMode->handleEvent(context, event);
       if (result != nullptr) {
         currentMode = std::move(result);
       }
