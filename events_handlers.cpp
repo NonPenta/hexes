@@ -122,6 +122,9 @@ std::unique_ptr<InputMode> MovementMode::handleKeyPress(Context &context,
   switch (event.key.code) {
   case sf::Keyboard::Escape:
     return std::make_unique<SelectionMode>(context);
+  case sf::Keyboard::Delete:
+    context.entities.erase(preview.getName());
+    return std::make_unique<SelectionMode>(context);
   default:
     return nullptr;
   }
