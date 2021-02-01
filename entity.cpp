@@ -111,8 +111,21 @@ Entity Entity::getEntityFromPreview() const {
   return Entity(name, pos.x, pos.y, type.substr(7), width, height);
 }
 bool Entity::hoveredByPos(sf::Vector2i pos_) const {
-  return (pos_.x >= pos.x) && (pos_.x < pos.x + width) && (pos_.y >= pos.y) &&
-         (pos_.y < pos.y + height);
+  sf::Vector2i anchor = pos;
+  sf::Vector2i dAnchor = pos;
+  dAnchor.x += width;
+  dAnchor.y += height;
+
+  if (width < 0) {
+    std::swap(anchor.x, dAnchor.x);
+    dAnchor.x++;
+  }
+  if (height < 0) {
+    std::swap(anchor.y, dAnchor.y);
+    dAnchor.y++;
+  }
+  return (pos_.x >= anchor.x) && (pos_.x < dAnchor.x) && (pos_.y >= anchor.y) &&
+         (pos_.y < dAnchor.y);
 }
 void Entity::setView(sf::View &view) {
   viewPos = view.getCenter();

@@ -13,6 +13,7 @@ public:
   int distance(Hex a);
   void moveTo(int x, int y);
   void updatePosition();
+  sf::Vector2i getPos() const;
 
   bool isInView(sf::Vector2f viewPos, sf::Vector2f viewSizeDelta) const;
 

@@ -62,6 +62,7 @@ void Hex::updatePosition() {
   s.setPosition(size * std::sqrt(3.0) * p.x + size * std::sqrt(3.0) / 2. * p.y,
                 size * 3. * p.y / 2.);
 }
+sf::Vector2i Hex::getPos() const { return p; }
 
 std::string Hex::getType() const { return type; }
 
