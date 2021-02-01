@@ -4,6 +4,9 @@
 
 int abs(int x) { if (x > 0) { return x; } else { return -x; }}
 int abs(float x) { if (x > 0) { return x; } else { return -x; }}
+int abs(sf::Vector2i v) {
+  return std::sqrt(v.x*v.x + v.y*v.y);
+}
 
 sf::Vector2i hex_round(sf::Vector2f f_pos) {
   int x = std::round(f_pos.x);

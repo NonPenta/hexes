@@ -1,5 +1,6 @@
 #include <cmath>
 #include "hex.hpp"
+#include "hex_utils.hpp"
 
 Hex::Hex() {}
 Hex::Hex(int x_, int y_): type{"n"}, p{x_, y_}, size{10}, s{size-1, 6} {
@@ -47,15 +48,11 @@ Hex::Hex(int x_, int y_, std::string type_): type{type_}, p{x_, y_}, size{10}, s
   s.setOrigin(9.7, 12);
 }
 
-Coord Hex::neighbor(int dir) {
-  return p.neighbor(dir);
-}
-
 int Hex::distance(Hex a) {
-  Coord c = p - a.p;
-  return c.abs();
+  sf::Vector2i v = p - a.p;
+  return abs(v);
 }
-void Hex::moveTo(int x, int y) { p = Coord{x, y}; updatePosition(); }
+void Hex::moveTo(int x, int y) { p = sf::Vector2i{x, y}; updatePosition(); }
 void Hex::updatePosition() {
   s.setPosition(size*std::sqrt(3.0)*p.x + size*std::sqrt(3.0)/2.*p.y, size*3.*p.y/2.);
 }

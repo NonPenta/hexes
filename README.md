@@ -1,2 +1,2 @@
 # hexes
-to do : file grid storage and dynamic loading/unloading based on view size
+to do : idk add modes oh and dynamic loading/unloading

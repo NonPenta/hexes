@@ -1,7 +1,6 @@
 #pragma once
 #include <SFML/Graphics.hpp>
 #include <string>
-#include "coordinates.hpp"
 
 
 class Hex : public sf::Drawable {
@@ -10,7 +9,7 @@ class Hex : public sf::Drawable {
     Hex(int x_, int y_);
     Hex(int x_, int y_, std::string type_);
 
-    Coord neighbor(int dir);
+    sf::Vector2i neighbor(int dir);
 
     int distance(Hex a);
     void moveTo(int x, int y);
@@ -22,7 +21,7 @@ class Hex : public sf::Drawable {
 
 private:
   std::string type;
-  Coord p;
+  sf::Vector2i p;
   float size;
   sf::CircleShape s;
 

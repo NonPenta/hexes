@@ -4,12 +4,11 @@
 #include <SFML/Graphics.hpp>
 #include <string>
 #include "hex.hpp"
-#include "coordinates.hpp"
 
 class Entity : public sf::Drawable {
   private:
     std::string name;
-    Coord pos;
+    sf::Vector2i pos;
     std::string type;
     int width;
     int height;

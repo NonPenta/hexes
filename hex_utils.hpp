@@ -3,6 +3,7 @@
 
 int abs(int x);
 int abs(float x);
+int abs(sf::Vector2i v);
 
 sf::Vector2i hex_round(sf::Vector2f f_pos);
 sf::Vector2i hex_from_pix(sf::Vector2f pos);

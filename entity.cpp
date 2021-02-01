@@ -48,9 +48,9 @@ void Entity::select() { selected = true; }
 void Entity::unSelect() { selected = false; }
 bool Entity::isSelected() const { return selected; }
 
-void Entity::moveTo(int x, int y) { pos = Coord{x, y}; updatePosition(); }
-void Entity::moveTo(sf::Vector2i p) { pos = Coord{p.x, p.y}; updatePosition(); }
-void Entity::moveBy(int x, int y) { pos = Coord{pos.x+x, pos.y+y}; updatePosition(); }
+void Entity::moveTo(int x, int y) { pos = sf::Vector2i{x, y}; updatePosition(); }
+void Entity::moveTo(sf::Vector2i p) { pos = sf::Vector2i{p.x, p.y}; updatePosition(); }
+void Entity::moveBy(int x, int y) { pos = sf::Vector2i{pos.x+x, pos.y+y}; updatePosition(); }
 void Entity::updatePosition() {
   members.clear();
   for (int xi = pos.x + width * (width<0); xi < pos.x + (width < 0) + width * (width>0); xi++) {
