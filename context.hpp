@@ -1,7 +1,7 @@
 #pragma once
-#include <SFML/Graphics.hpp>
 #include "chunkmap.hpp"
 #include "entity.hpp"
+#include <SFML/Graphics.hpp>
 
 struct Context {
   ChunkMap &map;

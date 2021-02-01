@@ -1,29 +1,29 @@
 #pragma once
-#include <array>
-#include <SFML/Graphics.hpp>
 #include "hex.hpp"
+#include <SFML/Graphics.hpp>
+#include <array>
 
 class Chunk : public sf::Drawable {
-  public:
-    Chunk();
-    Chunk(int x_, int y_);
+public:
+  Chunk();
+  Chunk(int x_, int y_);
 
-    void setView(sf::View& view);
-    std::array<std::array<Hex, 65>, 65> getc() const;
+  void setView(sf::View &view);
+  std::array<std::array<Hex, 65>, 65> getc() const;
 
-    void setHexType(int hexX, int hexY, std::string type);
+  void setHexType(int hexX, int hexY, std::string type);
 
-  private:
-    std::array<std::array<Hex, 65>, 65> c;
-    union {
-      int p[2];
-      struct {
-        int x, y;
-      };
+private:
+  std::array<std::array<Hex, 65>, 65> c;
+  union {
+    int p[2];
+    struct {
+      int x, y;
     };
+  };
 
-    sf::Vector2f viewPos;
-    sf::Vector2f viewSizeDelta;
+  sf::Vector2f viewPos;
+  sf::Vector2f viewSizeDelta;
 
-    void draw(sf::RenderTarget& target, sf::RenderStates states) const;
+  void draw(sf::RenderTarget &target, sf::RenderStates states) const;
 };
