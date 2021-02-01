@@ -8,16 +8,9 @@
 Entity::Entity() {}
 Entity::Entity(int x, int y) :                               name{boost::uuids::to_string(boost::uuids::random_generator()())}, pos{x, y}, type{"unknown"}, width{1},     height{1}, selected{0}, members{}, viewPos{}, viewSizeDelta{} { members[std::pair<int,int>{x,y}] = Hex(x, y, type); }
 Entity::Entity(int x, int y, std::string type_) :            name{boost::uuids::to_string(boost::uuids::random_generator()())}, pos{x, y}, type{type_},     width{1},     height{1}, selected{0}, members{}, viewPos{}, viewSizeDelta{} { members[std::pair<int,int>{x,y}] = Hex(x, y, type_); }
-Entity::Entity(int x, int y, std::string type_, int size_) : name{boost::uuids::to_string(boost::uuids::random_generator()())}, pos{x, y}, type{type_},     width{size_}, height{size_}, selected{0}, members{}, viewPos{}, viewSizeDelta{} {
-  for (int xi = x; xi < x+size_; xi++) {
-    for (int yi = y; yi < y+size_; yi++) {
-      members[std::pair<int,int>{xi, yi}] = Hex(xi, yi, type_);
-    }
-  }
-}
 Entity::Entity(int x, int y, std::string type_, int width_, int height_) : name{boost::uuids::to_string(boost::uuids::random_generator()())}, pos{x, y}, type{type_}, width{width_}, height{height_}, selected{0}, members{}, viewPos{}, viewSizeDelta{} {
-  for (int xi = x; xi < x+width_; xi++) {
-    for (int yi = y; yi < y+height_; yi++) {
+  for (int xi = pos.x + width * (width<0); xi < pos.x + (width < 0) + width * (width>0); xi++) {
+    for (int yi = pos.y + height * (height<0); yi < pos.y + (height < 0) + height * (height>0); yi++) {
       members[std::pair<int,int>{xi, yi}] = Hex(xi, yi, type_);
     }
   }
@@ -26,16 +19,9 @@ Entity::Entity(int x, int y, std::string type_, int width_, int height_) : name{
 
 Entity::Entity(std::string name, int x, int y) :                                name{name}, pos{x, y}, type{"unknown"}, width{1},     height{1},     selected{0}, members{}, viewPos{}, viewSizeDelta{} { members[std::pair<int,int>{x,y}] = Hex(x, y, type); }
 Entity::Entity(std::string name, int x, int y, std::string type_) :             name{name}, pos{x, y}, type{type_},     width{1},     height{1},     selected{0}, members{}, viewPos{}, viewSizeDelta{} { members[std::pair<int,int>{x,y}] = Hex(x, y, type_); }
-Entity::Entity(std::string name, int x, int y, std::string type_, int size_) :  name{name}, pos{x, y}, type{type_},     width{size_}, height{size_}, selected{0}, members{}, viewPos{}, viewSizeDelta{} {
-  for (int xi = x; xi < x+size_; xi++) {
-    for (int yi = y; yi < y+size_; yi++) {
-      members[std::pair<int,int>{xi, yi}] = Hex(xi, yi, type_);
-    }
-  }
-}
 Entity::Entity(std::string name_, int x, int y, std::string type_, int width_, int height_) : name{name_}, pos{x, y}, type{type_}, width{width_}, height{height_}, selected{0}, members{}, viewPos{}, viewSizeDelta{} {
-  for (int xi = x; xi < x+width_; xi++) {
-    for (int yi = y; yi < y+height_; yi++) {
+  for (int xi = pos.x + width * (width<0); xi < pos.x + (width < 0) + width * (width>0); xi++) {
+    for (int yi = pos.y + height * (height<0); yi < pos.y + (height < 0) + height * (height>0); yi++) {
       members[std::pair<int,int>{xi, yi}] = Hex(xi, yi, type_);
     }
   }
@@ -45,6 +31,15 @@ Entity::Entity(std::string name_, int x, int y, std::string type_, int width_, i
 
 std::string Entity::getName() const { return name; }
 std::string Entity::getType() const { return type; }
+void Entity::setType(std::string type_) {
+  type = type_;
+  members.clear();
+  for (int xi = pos.x + width * (width<0); xi < pos.x + (width < 0) + width * (width>0); xi++) {
+    for (int yi = pos.y + height * (height<0); yi < pos.y + (height < 0) + height * (height>0); yi++) {
+      members[std::pair<int,int>{xi, yi}] = Hex(xi, yi, type);
+    }
+  }
+}
 int Entity::getWidth() const { return width; }
 int Entity::getHeight() const { return height; }
 int Entity::getMemberSize() const { return members.size(); }
@@ -58,8 +53,8 @@ void Entity::moveTo(sf::Vector2i p) { pos = Coord{p.x, p.y}; updatePosition(); }
 void Entity::moveBy(int x, int y) { pos = Coord{pos.x+x, pos.y+y}; updatePosition(); }
 void Entity::updatePosition() {
   members.clear();
-  for (int xi = pos.x; xi < pos.x+width; xi++) {
-    for (int yi = pos.y; yi < pos.y+height; yi++) {
+  for (int xi = pos.x + width * (width<0); xi < pos.x + (width < 0) + width * (width>0); xi++) {
+    for (int yi = pos.y + height * (height<0); yi < pos.y + (height < 0) + height * (height>0); yi++) {
       members[std::pair<int,int>{xi, yi}] = Hex(xi, yi, type);
     }
   }

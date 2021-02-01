@@ -26,16 +26,15 @@ class Entity : public sf::Drawable {
     Entity();
     Entity(int x, int y);
     Entity(int x, int y, std::string type_);
-    Entity(int x, int y, std::string type_, int size_);
     Entity(int x, int y, std::string type_, int width_, int height_);
 
     Entity(std::string name, int x, int y);
     Entity(std::string name, int x, int y, std::string type_);
-    Entity(std::string name, int x, int y, std::string type_, int size_);
     Entity(std::string name, int x, int y, std::string type_, int width_, int height_);
 
     std::string getName() const;
     std::string getType() const;
+    void setType(std::string type_);
     int getWidth() const;
     int getHeight() const;
     int getMemberSize() const;
