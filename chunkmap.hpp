@@ -9,6 +9,8 @@ public:
   ChunkMap();
   ChunkMap(int x0, int y0, int dx, int dy);
 
+  void setHexType(sf::Vector2i p, std::string type);
+
   void setView(sf::View &view);
   void setChunk(std::pair<int, int> cPos, Chunk chunk);
 
