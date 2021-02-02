@@ -22,16 +22,18 @@ Hex::Hex(int x_, int y_, std::string type_)
 
   if (checkType == "player") {
     s.setFillColor(sf::Color(0, 255, 0));
-  } else if (checkType == "water") {
-    s.setFillColor(sf::Color(127, 127, 255));
-  } else if (checkType == "wall") {
-    s.setFillColor(sf::Color(32, 31, 35));
   } else if (checkType == "ennemy") {
     s.setFillColor(sf::Color(255, 0, 0));
   } else if (checkType == "ally") {
     s.setFillColor(sf::Color(127, 255, 127));
   } else if (checkType == "unknown") {
     s.setFillColor(sf::Color(0, 0, 255));
+  } else if (checkType == "water") {
+    s.setFillColor(sf::Color(127, 127, 255));
+  } else if (checkType == "wall") {
+    s.setFillColor(sf::Color(32, 31, 35));
+  } else if (checkType == "grass") {
+    s.setFillColor(sf::Color(78, 240, 130));
   } else if (checkType == "mousePointer") {
     s.setFillColor(sf::Color(168, 243, 243, 150));
   } else {
