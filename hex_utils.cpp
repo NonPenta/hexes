@@ -16,7 +16,7 @@ int abs(float x) {
     return -x;
   }
 }
-int abs(sf::Vector2i v) { return std::sqrt(v.x * v.x + v.y * v.y); }
+int abs(sf::Vector2i v) { return (abs(v.x) + abs(v.y) + abs(v.x + v.y)) / 2; }
 
 sf::Vector2i hex_round(sf::Vector2f f_pos) {
   int x = std::round(f_pos.x);
@@ -59,3 +59,12 @@ sf::Vector2i hex_within_chunk(sf::Vector2i hex_pos) {
 
   return sf::Vector2i(x, y);
 }
+
+sf::Vector2i hexNeighbor(int dir) {}
+
+namespace sf {
+template <typename T>
+bool operator<(const sf::Vector2<T> &left, const sf::Vector2<T> &right) {
+  return (left.x < right.x) || ((left.x == right.x) && (left.y < right.y));
+}
+} // namespace sf
