@@ -60,11 +60,14 @@ sf::Vector2i hex_within_chunk(sf::Vector2i hex_pos) {
   return sf::Vector2i(x, y);
 }
 
-sf::Vector2i hexNeighbor(int dir) {}
+sf::Vector2i hexNeighbor(int dir) {
+  std::array<sf::Vector2i, 6> arr{sf::Vector2i(1, 0),  sf::Vector2i(1, -1),
+                                  sf::Vector2i(0, -1), sf::Vector2i(-1, 0),
+                                  sf::Vector2i(-1, 1), sf::Vector2i(0, 1)};
+  return arr[dir];
+}
 
 namespace sf {
-template <typename T>
-bool operator<(const sf::Vector2<T> &left, const sf::Vector2<T> &right) {
+bool operator<(sf::Vector2i const &left, sf::Vector2i const &right) {
   return (left.x < right.x) || ((left.x == right.x) && (left.y < right.y));
-}
-} // namespace sf
+}}

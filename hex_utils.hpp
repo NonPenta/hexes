@@ -11,8 +11,6 @@ sf::Vector2i chunk_from_hex(sf::Vector2i hex_pos);
 sf::Vector2i hex_within_chunk(sf::Vector2i hex_pos);
 
 sf::Vector2i hexNeighbor(int dir);
-
 namespace sf {
-template <typename T>
-bool operator<(const sf::Vector2<T> &left, const sf::Vector2<T> &right);
-} // namespace sf
+bool operator<(sf::Vector2i const &left, sf::Vector2i const &right);
+} /* sf */
