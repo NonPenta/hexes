@@ -277,9 +277,10 @@ void BrushMode::updateBrush(int delta) {
       }
     }
   } else {
-    for (auto &pos : brush) {
+    std::set<sf::Vector2i> pBrush = brush;
+    for (auto &pos : pBrush) {
       std::cout << pos.x << " " << pos.y << " : " << abs(pos) << '\n';
-      if (abs(pos) < r - 1) {
+      if (abs(pos) > r - 1) {
         brush.erase(pos);
       }
     }
@@ -304,7 +305,6 @@ BrushMode::BrushMode() : brush{} {
     std::set<sf::Vector2i> pBrush = brush;
     for (auto &pos : pBrush) {
       for (int n = 0; n < 6; n++) {
-        std::cout << i << " " << n << '\n';
         brush.insert(pos + hexNeighbor(n));
       }
     }
@@ -325,6 +325,7 @@ std::unique_ptr<InputMode> BrushMode::handleEvent(Context &context,
 
   case sf::Event::MouseWheelMoved: {
     int delta = event.mouseWheel.delta;
+    std::cout << delta << '\n';
     r += delta;
     if (r < 0) {
       delta = 1 - r;
@@ -338,7 +339,7 @@ std::unique_ptr<InputMode> BrushMode::handleEvent(Context &context,
     return handleKeyPress(context, event);
 
   case sf::Event::Closed:
-    window.close();
+    context.window.close();
     return nullptr;
 
   default:
