@@ -245,18 +245,11 @@ std::unique_ptr<InputMode> BrushMode::handleKeyPress(Context &context,
     return std::make_unique<SelectionMode>(context);
   case sf::Keyboard::Equal:
     if (sf::Keyboard::isKeyPressed(sf::Keyboard::LShift)) {
-      r++;
       updateBrush(1);
     }
     return nullptr;
   case sf::Keyboard::Hyphen: {
-    r--;
-    int delta = -1;
-    if (r < 0) {
-      delta = 1 - r;
-      r = 1;
-    }
-    updateBrush(delta);
+    updateBrush(-1);
     return nullptr;
   }
   default:
@@ -265,11 +258,15 @@ std::unique_ptr<InputMode> BrushMode::handleKeyPress(Context &context,
 }
 
 void BrushMode::updateBrush(int delta) {
+  std::cout << delta << '\n';
+
   if (delta > 0) {
-    for (int i = 0; i < r; i++) {
+    int pr = r;
+    for (; r < pr + delta; r++) { // 1st question : does this work ?
+
       std::set<sf::Vector2i> pBrush = brush;
       for (auto &pos : pBrush) {
-        if (abs(pos) >= r - 1 - delta) {
+        if (abs(pos) == r - 1) {
           for (int n = 0; n < 6; n++) {
             brush.insert(pos + hexNeighbor(n));
           }
@@ -277,15 +274,21 @@ void BrushMode::updateBrush(int delta) {
       }
     }
   } else {
+
     std::set<sf::Vector2i> pBrush = brush;
-    for (auto &pos : pBrush) {
-      std::cout << pos.x << " " << pos.y << " : " << abs(pos) << '\n';
-      if (abs(pos) > r - 1) {
-        brush.erase(pos);
+    int pr = r;
+    while (r > pr + delta && r > 1) {
+      for (auto &pos : pBrush) {
+        std::cout << pos.x << " " << pos.y << " : " << abs(pos) << '\n';
+        if (abs(pos) > r + delta - 1) {
+          brush.erase(pos);
+        }
       }
+      r--;
     }
   }
 }
+
 void BrushMode::brushStroke(Context &context) {
   for (auto pos : brush) {
     context.map.setHexType(mousePos + pos, type);
@@ -324,14 +327,7 @@ std::unique_ptr<InputMode> BrushMode::handleEvent(Context &context,
     return handleMouseEvent(context, event);
 
   case sf::Event::MouseWheelMoved: {
-    int delta = event.mouseWheel.delta;
-    std::cout << delta << '\n';
-    r += delta;
-    if (r < 0) {
-      delta = 1 - r;
-      r = 1;
-    }
-    updateBrush(delta);
+    updateBrush(event.mouseWheel.delta);
     return nullptr;
   }
 
