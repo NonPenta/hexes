@@ -4,9 +4,58 @@
 #include <iostream>
 
 // ---------------------------- SelectionMode ----------------------------
+// --- Private methods ---
+std::unique_ptr<InputMode> SelectionMode::handleMouseEvent(Context &context,
+                                                           sf::Event event) {
+  switch (event.mouseButton.button) {
+  case sf::Mouse::Left:
+    return handleLeftClick(context);
+  default:
+    return nullptr;
+  }
+}
+
+std::unique_ptr<InputMode> SelectionMode::handleLeftClick(Context &context) {
+  sf::Vector2i mouseHexPos = hex_from_pix(
+      context.window.mapPixelToCoords(sf::Mouse::getPosition(context.window)));
+  // position of the mouse on the window converted to world pos converted to hex
+  // coordinates
+  for (auto &ePair : context.entities) {
+    if (ePair.second.hoveredByPos(mouseHexPos)) {
+      return std::make_unique<MovementMode>(context, ePair.first);
+    }
+  }
+  return std::make_unique<CreationMode>(context);
+}
+std::unique_ptr<InputMode> SelectionMode::handleKeyPress(Context &context,
+                                                         sf::Event event) {
+  switch (event.key.code) {
+  case sf::Keyboard::Escape:
+    save(context.map, context.entities, "test_0");
+    context.window.close(); // Save and close the window
+    return nullptr;
+  case sf::Keyboard::B:
+    return std::make_unique<BrushMode>();
+  default:
+    return nullptr;
+  }
+}
+
+void SelectionMode::draw(sf::RenderTarget &target,
+                         sf::RenderStates states) const {
+  target.draw(Hex{mousePos.x, mousePos.y, "mousePointer"}, states);
+}
+
+// --- Public  methods ---
 
 SelectionMode::SelectionMode(Context context)
-    : mousePos{sf::Mouse::getPosition(context.window)} {}
+    : mousePos{hex_from_pix(context.window.mapPixelToCoords(
+          sf::Mouse::getPosition(context.window)))} {}
+
+void SelectionMode::updateContext(Context &context) {
+  mousePos = hex_from_pix(
+      context.window.mapPixelToCoords(sf::Mouse::getPosition(context.window)));
+}
 
 std::unique_ptr<InputMode> SelectionMode::handleEvent(Context &context,
                                                       sf::Event event) {
@@ -27,74 +76,8 @@ std::unique_ptr<InputMode> SelectionMode::handleEvent(Context &context,
   }
 }
 
-std::unique_ptr<InputMode> SelectionMode::handleMouseEvent(Context &context,
-                                                           sf::Event event) {
-  switch (event.mouseButton.button) {
-  case sf::Mouse::Left:
-    return handleLeftClick(context);
-  default:
-    return nullptr;
-  }
-}
-std::unique_ptr<InputMode> SelectionMode::handleLeftClick(Context &context) {
-  sf::Vector2i mouseHexPos = hex_from_pix(
-      context.window.mapPixelToCoords(sf::Mouse::getPosition(context.window)));
-  // position of the mouse on the window converted to world pos converted to hex
-  // coordinates
-  for (auto &ePair : context.entities) {
-    if (ePair.second.hoveredByPos(mouseHexPos)) {
-      return std::make_unique<MovementMode>(context, ePair.first);
-    }
-  }
-  return std::make_unique<CreationMode>(context);
-}
-
-std::unique_ptr<InputMode> SelectionMode::handleKeyPress(Context &context,
-                                                         sf::Event event) {
-  switch (event.key.code) {
-  case sf::Keyboard::Escape:
-    save(context.map, context.entities, "test_0");
-    context.window.close(); // Save and close the window
-    return nullptr;
-  default:
-    return nullptr;
-  }
-}
-
-void SelectionMode::updateContext(Context context) {
-  mousePos = hex_from_pix(
-      context.window.mapPixelToCoords(sf::Mouse::getPosition(context.window)));
-}
-void SelectionMode::draw(sf::RenderTarget &target,
-                         sf::RenderStates states) const {
-  target.draw(Hex{mousePos.x, mousePos.y, "mousePointer"}, states);
-}
-
 // ---------------------------- MovementMode ----------------------------
-
-MovementMode::MovementMode(Context context, std::string selectedName)
-    : mouseDelta(context.entities[selectedName].getPos() -
-                 hex_from_pix(context.window.mapPixelToCoords(
-                     sf::Mouse::getPosition(context.window)))),
-      preview(context.entities[selectedName].getPreviewAt(
-          hex_from_pix(context.window.mapPixelToCoords(
-              sf::Mouse::getPosition(context.window))))) {}
-
-std::unique_ptr<InputMode> MovementMode::handleEvent(Context &context,
-                                                     sf::Event event) {
-  switch (event.type) {
-
-  case sf::Event::MouseButtonPressed:
-    return handleMouseEvent(context, event);
-
-  case sf::Event::KeyPressed:
-    return handleKeyPress(context, event);
-
-  default:
-    return nullptr;
-  }
-}
-
+// --- Private methods ---
 std::unique_ptr<InputMode> MovementMode::handleMouseEvent(Context &context,
                                                           sf::Event event) {
   switch (event.mouseButton.button) {
@@ -130,26 +113,84 @@ std::unique_ptr<InputMode> MovementMode::handleKeyPress(Context &context,
   }
 }
 
-void MovementMode::updateContext(Context context) {
+void MovementMode::draw(sf::RenderTarget &target,
+                        sf::RenderStates states) const {
+  target.draw(preview, states);
+}
+
+// --- Public  methods ---
+MovementMode::MovementMode(Context context, std::string selectedName)
+    : mouseDelta(context.entities[selectedName].getPos() -
+                 hex_from_pix(context.window.mapPixelToCoords(
+                     sf::Mouse::getPosition(context.window)))),
+      preview(context.entities[selectedName].getPreviewAt(
+          hex_from_pix(context.window.mapPixelToCoords(
+              sf::Mouse::getPosition(context.window))))) {}
+
+void MovementMode::updateContext(Context &context) {
   preview.moveTo(hex_from_pix(context.window.mapPixelToCoords(
                      sf::Mouse::getPosition(context.window))) +
                  mouseDelta);
   preview.setView(context.view);
 }
 
-void MovementMode::draw(sf::RenderTarget &target,
+std::unique_ptr<InputMode> MovementMode::handleEvent(Context &context,
+                                                     sf::Event event) {
+  switch (event.type) {
+
+  case sf::Event::MouseButtonPressed:
+    return handleMouseEvent(context, event);
+
+  case sf::Event::KeyPressed:
+    return handleKeyPress(context, event);
+
+  default:
+    return nullptr;
+  }
+}
+
+// ---------------------------- CreationMode ----------------------------
+// --- Private methods ---
+std::unique_ptr<InputMode> CreationMode::handleMouseEvent(Context &context,
+                                                          sf::Event event) {
+  switch (event.mouseButton.button) {
+  case sf::Mouse::Left:
+    updateContext(context);
+    context.entities[preview.getName()] = preview.getEntityFromPreview();
+    return std::make_unique<SelectionMode>(context);
+
+  case sf::Mouse::Right:
+    typeId = (typeId + 1) % 4;
+    preview.setType(previewTypes[typeId]);
+    return nullptr;
+  default:
+    return nullptr;
+  }
+}
+
+std::unique_ptr<InputMode> CreationMode::handleKeyPress(Context &context,
+                                                        sf::Event event) {
+  switch (event.key.code) {
+  case sf::Keyboard::Escape:
+    return std::make_unique<SelectionMode>(context);
+  default:
+    return nullptr;
+  }
+}
+
+void CreationMode::draw(sf::RenderTarget &target,
                         sf::RenderStates states) const {
   target.draw(preview, states);
 }
 
-// ---------------------------- CreationMode ----------------------------
+// --- Public  methods ---
 CreationMode::CreationMode(Context context) {
   sf::Vector2i anchor = hex_from_pix(
       context.window.mapPixelToCoords(sf::Mouse::getPosition(context.window)));
   preview = Entity(anchor.x, anchor.y, "previewplayer", 0, 0);
 }
 
-void CreationMode::updateContext(Context context) {
+void CreationMode::updateContext(Context &context) {
   sf::Vector2i sizeOrigin = hex_from_pix(
       context.window.mapPixelToCoords(sf::Mouse::getPosition(context.window)));
   sf::Vector2i ppos = preview.getPos();
@@ -184,34 +225,116 @@ std::unique_ptr<InputMode> CreationMode::handleEvent(Context &context,
   }
 }
 
-std::unique_ptr<InputMode> CreationMode::handleMouseEvent(Context &context,
-                                                          sf::Event event) {
+// --------------------------- BrushMode ----------------------------
+// --- Private methods ---
+std::unique_ptr<InputMode> BrushMode::handleMouseEvent(Context &context,
+                                                       sf::Event event) {
   switch (event.mouseButton.button) {
   case sf::Mouse::Left:
-    updateContext(context);
-    context.entities[preview.getName()] = preview.getEntityFromPreview();
-    return std::make_unique<SelectionMode>(context);
-
-  case sf::Mouse::Right:
-    typeId = (typeId + 1) % 4;
-    preview.setType(previewTypes[typeId]);
+    brushStroke(context);
     return nullptr;
   default:
     return nullptr;
   }
 }
 
-std::unique_ptr<InputMode> CreationMode::handleKeyPress(Context &context,
-                                                        sf::Event event) {
+std::unique_ptr<InputMode> BrushMode::handleKeyPress(Context &context,
+                                                     sf::Event event) {
   switch (event.key.code) {
   case sf::Keyboard::Escape:
     return std::make_unique<SelectionMode>(context);
+  case sf::Keyboard::Equal:
+    if (sf::Keyboard::isKeyPressed(sf::Keyboard::LShift)) {
+      r++;
+      updateBrush(1);
+    }
+    return nullptr;
+  case sf::Keyboard::Hyphen: {
+    r--;
+    int delta = -1;
+    if (r < 0) {
+      delta = 1 - r;
+      r = 1;
+    }
+    updateBrush(delta);
+    return nullptr;
+  }
   default:
     return nullptr;
   }
 }
 
-void CreationMode::draw(sf::RenderTarget &target,
-                        sf::RenderStates states) const {
-  target.draw(preview, states);
+void BrushMode::updateBrush(int delta) {
+  if (delta > 0) {
+    for (int i = 0; i < r; i++) {
+      for (auto &pos : brush) {
+        if (abs(pos) >= r - 1 - delta) {
+          for (int n = 0; n < 6; n++) {
+            brush.insert(pos + hexNeighbor(n));
+          }
+        }
+      }
+    }
+  } else {
+    for (auto &pos : brush) {
+      if (abs(pos) < r - 1) {
+        brush.erase(pos);
+      }
+    }
+  }
+}
+void BrushMode::brushStroke(Context &context) {
+  for (auto pos : brush) {
+    context.map.setHexType(mousePos + pos, type);
+  }
+}
+void BrushMode::draw(sf::RenderTarget &target, sf::RenderStates states) const {
+  for (sf::Vector2i v : brush) {
+    target.draw(Hex{v.x, v.y, "preview" + type}, states);
+  }
+}
+
+// --- Public  methods ---
+BrushMode::BrushMode() : brush{} {
+  brush = {{0, 0}};
+  for (int i = 0; i < r; i++) {
+    std::set<sf::Vector2i> pBrush = brush;
+    for (auto &pos : pBrush) {
+      for (int n = 0; n < 6; n++) {
+        std::cout << i << " " << n << '\n';
+        brush.insert(pos + hexNeighbor(n));
+      }
+    }
+  }
+}
+
+void BrushMode::updateContext(Context &context) {
+  mousePos = hex_from_pix(
+      context.window.mapPixelToCoords(sf::Mouse::getPosition(context.window)));
+}
+
+std::unique_ptr<InputMode> BrushMode::handleEvent(Context &context,
+                                                  sf::Event event) {
+  switch (event.type) {
+
+  case sf::Event::MouseButtonPressed:
+    return handleMouseEvent(context, event);
+
+  case sf::Event::MouseWheelMoved: {
+    int delta = event.mouseWheel.delta;
+    r += delta;
+    if (r < 0) {
+      delta = 1 - r;
+      r = 1;
+    }
+    updateBrush(delta);
+    return nullptr;
+  }
+
+  case sf::Event::KeyPressed:
+    return handleKeyPress(context, event);
+
+  default:
+    return nullptr;
+  }
 }
