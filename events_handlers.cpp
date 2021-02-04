@@ -337,6 +337,10 @@ std::unique_ptr<InputMode> BrushMode::handleEvent(Context &context,
   case sf::Event::KeyPressed:
     return handleKeyPress(context, event);
 
+  case sf::Event::Closed:
+    window.close();
+    return nullptr;
+
   default:
     return nullptr;
   }
