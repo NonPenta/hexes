@@ -267,7 +267,8 @@ std::unique_ptr<InputMode> BrushMode::handleKeyPress(Context &context,
 void BrushMode::updateBrush(int delta) {
   if (delta > 0) {
     for (int i = 0; i < r; i++) {
-      for (auto &pos : brush) {
+      std::set<sf::Vector2i> pBrush = brush;
+      for (auto &pos : pBrush) {
         if (abs(pos) >= r - 1 - delta) {
           for (int n = 0; n < 6; n++) {
             brush.insert(pos + hexNeighbor(n));
@@ -277,6 +278,7 @@ void BrushMode::updateBrush(int delta) {
     }
   } else {
     for (auto &pos : brush) {
+      std::cout << pos.x << " " << pos.y << " : " << abs(pos) << '\n';
       if (abs(pos) < r - 1) {
         brush.erase(pos);
       }
@@ -290,7 +292,8 @@ void BrushMode::brushStroke(Context &context) {
 }
 void BrushMode::draw(sf::RenderTarget &target, sf::RenderStates states) const {
   for (sf::Vector2i v : brush) {
-    target.draw(Hex{v.x, v.y, "preview" + type}, states);
+    target.draw(Hex{v.x + mousePos.x, v.y + mousePos.y, "preview" + type},
+                states);
   }
 }
 
