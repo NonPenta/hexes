@@ -84,7 +84,8 @@ int main() {
     for (auto &entity : entities) {
       entity.second.setView(gameview);
     }
-    currentMode->updateContext({chunkStorage, entities, window, gameview});
+    Context context{chunkStorage, entities, window, gameview};
+    currentMode->updateContext(context);
 
     // DRAWING STUFF
     window.draw(chunkStorage);
