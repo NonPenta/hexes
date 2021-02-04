@@ -1,4 +1,5 @@
 #include "chunkmap.hpp"
+#include "hex_utils.hpp"
 #include <iostream>
 
 ChunkMap::ChunkMap() : map{}, pos0{}, dpos{} {}
@@ -12,7 +13,7 @@ ChunkMap::ChunkMap(int x0, int y0, int dx, int dy)
   }
 }
 
-void setHexType(sf::Vector2i p, std::string type) {
+void ChunkMap::setHexType(sf::Vector2i p, std::string type) {
   map[std::pair<int, int>{chunk_from_hex(p).x, chunk_from_hex(p).y}].setHexType(
       p.x, p.y, type);
 }
